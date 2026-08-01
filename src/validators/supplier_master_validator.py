@@ -19,6 +19,7 @@ STATE_GST_CODES = {
     "Telangana": "36",
     "Andhra Pradesh": "37",
     "Chandigarh": "04",
+    "Himachal Pradesh": "02",
 }
 
 

@@ -33,6 +33,7 @@ class IndianState(str, Enum):
     TELANGANA = "Telangana"
     ANDHRA_PRADESH = "Andhra Pradesh"
     CHANDIGARH = "Chandigarh"
+    HIMACHAL_PRADESH = "Himachal Pradesh"
 
 
 class SupplierMasterModel(BaseModel):
