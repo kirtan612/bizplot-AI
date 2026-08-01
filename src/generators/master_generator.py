@@ -48,26 +48,36 @@ def generate_products(rng: random.Random) -> List[ProductMasterModel]:
         attempts = 0
         while generated < count and attempts < 1000:
             attempts += 1
-            # Capability rules: Local Mills cannot supply GP
+            # Category distribution: GI (50%), MS (40%), GP (10%)
             if brand == Brand.LOCAL_MILLS:
-                category = rng.choice([Category.GI, Category.MS])
+                category = rng.choices([Category.GI, Category.MS], weights=[55, 45])[0]
             else:
-                category = rng.choice([Category.GI, Category.MS, Category.GP])
+                category = rng.choices([Category.GI, Category.MS, Category.GP], weights=[50, 40, 10])[0]
 
-            # Shape rules: GP only in Square/Rectangle
-            if category == Category.GP:
-                shape = rng.choice([Shape.SQUARE, Shape.RECTANGLE])
-            else:
-                shape = rng.choice([Shape.ROUND, Shape.SQUARE, Shape.RECTANGLE])
+            # Shape conditioning: GI skews Round, MS skews Square/Rectangle, GP includes Round/Square/Rect
+            if category == Category.GI:
+                shape = rng.choices([Shape.ROUND, Shape.SQUARE, Shape.RECTANGLE], weights=[80, 10, 10])[0]
+            elif category == Category.MS:
+                shape = rng.choices([Shape.ROUND, Shape.SQUARE, Shape.RECTANGLE], weights=[30, 45, 25])[0]
+            else:  # GP
+                shape = rng.choices([Shape.ROUND, Shape.SQUARE, Shape.RECTANGLE], weights=[40, 35, 25])[0]
+
+            # Weight class distribution: Medium (~60%), Light (~20%), Heavy (~20%)
+            weight_class = rng.choices([WeightClass.LIGHT, WeightClass.MEDIUM, WeightClass.HEAVY], weights=[20, 60, 20])[0]
 
             length = Decimal("6.00")
-            weight_class = rng.choice([WeightClass.LIGHT, WeightClass.MEDIUM, WeightClass.HEAVY])
             
             if shape == Shape.ROUND:
                 standard_ref = StandardRef.IS1239
-                # Pick a key from ROUND_SIZES
-                (size, _w_class), (od, wall_th) = rng.choice(list(ROUND_SIZES.items()))
-                weight_class = WeightClass(_w_class)
+                # Pick round size matching weight_class if available, or random size
+                matching_round_keys = [k for k in ROUND_SIZES.keys() if k[1] == weight_class.value]
+                if matching_round_keys:
+                    (size, _w_class) = rng.choice(matching_round_keys)
+                else:
+                    (size, _w_class) = rng.choice(list(ROUND_SIZES.keys()))
+                    weight_class = WeightClass(_w_class)
+
+                od, wall_th = ROUND_SIZES[(size, weight_class.value)]
                 width = None
                 height = None
                 od_dec = Decimal(str(od))
@@ -183,52 +193,116 @@ def generate_suppliers(rng: random.Random) -> List[SupplierMasterModel]:
 
 
 def generate_customers(rng: random.Random) -> List[CustomerMasterModel]:
-    """Generates 15 deterministic Customer Master records matching standard BRS distribution."""
-    customer_data = [
-        ("CUST-DIST-001", "Punjab Steel Distributors", CustomerType.DISTRIBUTOR, "Ludhiana", IndianState.PUNJAB, True, "03AAACP1234D1Z5", "AAACP1234D", Decimal("4500000.00"), 45, PaymentBehaviorTier.PROMPT),
-        ("CUST-RETL-001", "Grover Steel Traders", CustomerType.RETAILER, "Ludhiana", IndianState.PUNJAB, True, "03AABCG5678D1Z4", "AABCG5678D", Decimal("1200000.00"), 30, PaymentBehaviorTier.PROMPT),
-        ("CUST-RETL-002", "Singhal Iron Store", CustomerType.RETAILER, "Mohali", IndianState.PUNJAB, True, "03AACCS9012D1Z9", "AACCS9012D", Decimal("800000.00"), 30, PaymentBehaviorTier.SLOW),
-        ("CUST-RETL-003", "Janta Pipe House", CustomerType.RETAILER, "Ludhiana", IndianState.PUNJAB, False, None, "AABCP1234D", Decimal("400000.00"), 15, PaymentBehaviorTier.PROMPT),
-        ("CUST-FABR-001", "Vishwakarma Welders", CustomerType.FABRICATOR, "Ludhiana", IndianState.PUNJAB, False, None, "AAKPV9876F", Decimal("50000.00"), 0, PaymentBehaviorTier.PROMPT),
-        ("CUST-FABR-002", "Apex Grill Fabrication", CustomerType.FABRICATOR, "Jalandhar", IndianState.PUNJAB, True, "03AAFCA3456F1Z1", "AAFCA3456F", Decimal("150000.00"), 7, PaymentBehaviorTier.SLOW),
-        ("CUST-CONT-001", "North Infra Projects", CustomerType.CONTRACTOR, "Delhi", IndianState.DELHI, True, "07AABCN7890G1Z6", "AABCN7890G", Decimal("2500000.00"), 60, PaymentBehaviorTier.SLOW),
-        ("CUST-CONT-002", "Shivalik Construction", CustomerType.CONTRACTOR, "Shimla", IndianState.HIMACHAL_PRADESH, True, "02AAECS2345H1Z3", "AAECS2345H", Decimal("1500000.00"), 45, PaymentBehaviorTier.IRREGULAR),
-        ("CUST-DIST-002", "Haryana Steel Agency", CustomerType.DISTRIBUTOR, "Rohtak", IndianState.HARYANA, True, "06AAFHA6789I1Z2", "AAFHA6789I", Decimal("3500000.00"), 30, PaymentBehaviorTier.PROMPT),
-        ("CUST-RETL-004", "Balaji Iron Mart", CustomerType.RETAILER, "Gurgaon", IndianState.HARYANA, True, "06AABCB1234J1Z7", "AABCB1234J", Decimal("1000000.00"), 30, PaymentBehaviorTier.PROMPT),
-        ("CUST-FABR-003", "Star Metal Craft", CustomerType.FABRICATOR, "Noida", IndianState.UTTAR_PRADESH, False, None, "AABCX9988G", Decimal("75000.00"), 7, PaymentBehaviorTier.IRREGULAR),
-        ("CUST-RETL-005", "Gupta Hardware & Pipes", CustomerType.RETAILER, "Ghaziabad", IndianState.UTTAR_PRADESH, True, "09AAFGG5678K1Z3", "AAFGG5678K", Decimal("600000.00"), 15, PaymentBehaviorTier.SLOW),
-        ("CUST-DIST-003", "Maharashtra Pipes", CustomerType.DISTRIBUTOR, "Mumbai", IndianState.MAHARASHTRA, True, "27AADMP9012L1Z5", "AADMP9012L", Decimal("5000000.00"), 45, PaymentBehaviorTier.PROMPT),
-        ("CUST-CONT-003", "Western Grid Projects", CustomerType.CONTRACTOR, "Ahmedabad", IndianState.GUJARAT, True, "24AAGWP3456M1Z1", "AAGWP3456M", Decimal("2000000.00"), 60, PaymentBehaviorTier.IRREGULAR),
-        ("CUST-RETL-006", "Royal Hardware Store", CustomerType.RETAILER, "Amritsar", IndianState.PUNJAB, True, "03AAHRS7890N1Z2", "AAHRS7890N", Decimal("900000.00"), 30, PaymentBehaviorTier.PROMPT),
+    """Generates 50 deterministic Customer Master records matching standard BRS distribution."""
+    # Target breakdown: Retailer (23), Fabricator (12), Contractor (8), Distributor (7) = 50
+    types_plan = [
+        (CustomerType.RETAILER, 23, "RETL"),
+        (CustomerType.FABRICATOR, 12, "FABR"),
+        (CustomerType.CONTRACTOR, 8, "CONT"),
+        (CustomerType.DISTRIBUTOR, 7, "DIST"),
     ]
 
+    states_pool = [
+        (IndianState.PUNJAB, "03"),
+        (IndianState.PUNJAB, "03"),
+        (IndianState.PUNJAB, "03"),  # Punjab local skew (~60%)
+        (IndianState.HARYANA, "06"),
+        (IndianState.DELHI, "07"),
+        (IndianState.UTTAR_PRADESH, "09"),
+        (IndianState.MAHARASHTRA, "27"),
+        (IndianState.GUJARAT, "24"),
+        (IndianState.RAJASTHAN, "08"),
+    ]
+
+    cities_map = {
+        IndianState.PUNJAB: ["Ludhiana", "Amritsar", "Jalandhar", "Mohali", "Patiala"],
+        IndianState.HARYANA: ["Gurgaon", "Rohtak", "Faridabad", "Panipat"],
+        IndianState.DELHI: ["Delhi", "New Delhi"],
+        IndianState.UTTAR_PRADESH: ["Noida", "Ghaziabad", "Kanpur", "Lucknow"],
+        IndianState.MAHARASHTRA: ["Mumbai", "Pune", "Nagpur"],
+        IndianState.GUJARAT: ["Ahmedabad", "Surat", "Vadodara", "Rajkot"],
+        IndianState.RAJASTHAN: ["Jaipur", "Jodhpur"],
+    }
+
     customers: List[CustomerMasterModel] = []
-    for code, name, c_type, city, state, registered, gstin, pan, limit, credit_days, tier in customer_data:
-        c_model = CustomerMasterModel(
-            customer_id=uuid.UUID(int=rng.getrandbits(128)),
-            customer_code=code,
-            customer_name=name,
-            customer_type=c_type,
-            address_line1="Main Market Road",
-            address_line2=None,
-            city=city,
-            state=state,
-            pincode="380015" if state == IndianState.GUJARAT else "141008",
-            gst_registered=registered,
-            gstin=gstin,
-            pan=pan,
-            contact_person="Purchase Manager",
-            contact_phone="9812345670",
-            contact_email=f"contact@{code.lower()}.com",
-            credit_limit=limit,
-            credit_period_days=credit_days,
-            payment_behavior_tier=tier,
-            active=True,
-            onboarding_date=date(2024, 1, 1),
-            created_at=datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
-            updated_at=datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
-        )
-        customers.append(c_model)
+    seq_counters = {"RETL": 1, "FABR": 1, "CONT": 1, "DIST": 1}
+
+    for c_type, count, type_code in types_plan:
+        for _ in range(count):
+            seq = seq_counters[type_code]
+            seq_counters[type_code] += 1
+            code = f"CUST-{type_code}-{seq:03d}"
+
+            state, st_prefix = rng.choice(states_pool)
+            city = rng.choice(cities_map.get(state, ["Ludhiana"]))
+
+            # Registration rules
+            if c_type in [CustomerType.DISTRIBUTOR, CustomerType.CONTRACTOR]:
+                registered = True
+            elif c_type == CustomerType.RETAILER:
+                registered = (rng.random() < 0.80)
+            else:  # Fabricator
+                registered = (rng.random() < 0.40)
+
+            # PAN & GSTIN
+            pan_letters = "".join(rng.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=5))
+            pan_digits = f"{rng.randint(1000, 9999)}"
+            pan_last = rng.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+            pan = f"{pan_letters}{pan_digits}{pan_last}"
+
+            if registered:
+                gstin = f"{st_prefix}{pan}1Z{rng.choice('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')}"
+            else:
+                gstin = None
+
+            # Credit limits & period
+            if c_type == CustomerType.DISTRIBUTOR:
+                limit = Decimal(str(rng.randint(2500, 5000) * 1000))
+                credit_days = rng.choice([30, 45])
+                tier = rng.choices([PaymentBehaviorTier.PROMPT, PaymentBehaviorTier.SLOW], weights=[80, 20])[0]
+            elif c_type == CustomerType.RETAILER:
+                limit = Decimal(str(rng.randint(500, 1500) * 1000))
+                credit_days = rng.choice([15, 30])
+                tier = rng.choices([PaymentBehaviorTier.PROMPT, PaymentBehaviorTier.SLOW, PaymentBehaviorTier.IRREGULAR], weights=[60, 30, 10])[0]
+            elif c_type == CustomerType.FABRICATOR:
+                limit = Decimal(str(rng.randint(50, 200) * 1000))
+                credit_days = rng.choice([0, 7])
+                tier = rng.choices([PaymentBehaviorTier.PROMPT, PaymentBehaviorTier.SLOW, PaymentBehaviorTier.IRREGULAR], weights=[50, 30, 20])[0]
+            else:  # Contractor
+                limit = Decimal(str(rng.randint(1000, 3000) * 1000))
+                credit_days = rng.choice([45, 60])
+                tier = rng.choices([PaymentBehaviorTier.PROMPT, PaymentBehaviorTier.SLOW, PaymentBehaviorTier.IRREGULAR], weights=[40, 40, 20])[0]
+
+            if not registered:
+                limit = round(limit * Decimal("0.50"), 2)
+
+            name = f"{city} {c_type.value} {seq}"
+
+            c_model = CustomerMasterModel(
+                customer_id=uuid.UUID(int=rng.getrandbits(128)),
+                customer_code=code,
+                customer_name=name,
+                customer_type=c_type,
+                address_line1="Main Market Road",
+                address_line2=None,
+                city=city,
+                state=state,
+                pincode="380015" if state == IndianState.GUJARAT else "141008",
+                gst_registered=registered,
+                gstin=gstin,
+                pan=pan,
+                contact_person="Purchase Manager",
+                contact_phone=f"98{rng.randint(10000000, 99999999)}",
+                contact_email=f"contact@{code.lower()}.com",
+                credit_limit=limit,
+                credit_period_days=credit_days,
+                payment_behavior_tier=tier,
+                active=True,
+                onboarding_date=date(2024, 1, 1),
+                created_at=datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
+                updated_at=datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
+            )
+            customers.append(c_model)
 
     res = customer_master_validator.validate_batch(customers)
     fails = [r for r in res if not r.passed]

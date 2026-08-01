@@ -26,9 +26,9 @@ def validate_v1(models: List[CashbookModel]) -> List[ValidationResult]:
 
 
 def validate_v2(model: CashbookModel) -> ValidationResult:
-    """V2: voucher_number matches format VOU-\\d{6}-\\d{3}."""
+    """V2: voucher_number matches format VOU-\\d{6}-\\d{3,6}."""
     vou = model.voucher_number.strip()
-    pattern = r"^VOU-\d{6}-\d{3}$"
+    pattern = r"^VOU-\d{6}-\d{3,6}$"
     passed = bool(re.match(pattern, vou))
     return ValidationResult(
         rule_id="V2",
@@ -36,7 +36,6 @@ def validate_v2(model: CashbookModel) -> ValidationResult:
         message="Voucher number format is valid." if passed else f"Voucher number '{vou}' does not match standard pattern VOU-YYYYMM-SEQ.",
         row_reference={"entry_id": str(model.entry_id), "voucher_number": model.voucher_number}
     )
-
 
 def validate_v3(model: CashbookModel) -> ValidationResult:
     """V3: amount > 0."""
@@ -47,7 +46,6 @@ def validate_v3(model: CashbookModel) -> ValidationResult:
         message="Transaction amount is positive." if passed else "Transaction amount must be strictly greater than zero.",
         row_reference={"entry_id": str(model.entry_id), "voucher_number": model.voucher_number}
     )
-
 
 def validate_v4(model: CashbookModel) -> ValidationResult:
     """V4: Cashbook balance math (Receipt = Opening + Amount, Payment = Opening - Amount)."""
@@ -70,7 +68,6 @@ def validate_v4(model: CashbookModel) -> ValidationResult:
         row_reference={"entry_id": str(model.entry_id), "voucher_number": model.voucher_number}
     )
 
-
 def validate_v5(model: CashbookModel) -> ValidationResult:
     """V5: closing_balance >= 0."""
     passed = model.closing_balance >= Decimal("0.00")
@@ -80,7 +77,6 @@ def validate_v5(model: CashbookModel) -> ValidationResult:
         message="Closing balance is non-negative." if passed else f"Closing balance ({model.closing_balance}) cannot be negative (cash/bank overdraft violation).",
         row_reference={"entry_id": str(model.entry_id), "voucher_number": model.voucher_number}
     )
-
 
 def validate_v6(
     model: CashbookModel,
@@ -117,7 +113,6 @@ def validate_v6(
         row_reference={"entry_id": str(model.entry_id), "voucher_number": model.voucher_number}
     )
 
-
 def validate_v7(model: CashbookModel) -> ValidationResult:
     """V7: reference_invoice_number format check."""
     passed = True
@@ -126,12 +121,12 @@ def validate_v7(model: CashbookModel) -> ValidationResult:
     if model.reference_invoice_number and model.reference_invoice_number.strip():
         ref_inv = model.reference_invoice_number.strip()
         if model.party_type == PartyType.CUSTOMER:
-            pattern = r"^INV-SAL-\d{6}-\d{3}$"
+            pattern = r"^INV-SAL-\d{6}-\d{3,6}$"
             if not re.match(pattern, ref_inv):
                 passed = False
                 message = f"Customer receipt reference invoice '{ref_inv}' does not match sales invoice format INV-SAL-YYYYMM-SEQ."
         elif model.party_type == PartyType.SUPPLIER:
-            pattern = r"^INV-PUR-\d{6}-\d{3}$"
+            pattern = r"^INV-PUR-\d{6}-\d{3,6}$"
             if not re.match(pattern, ref_inv):
                 passed = False
                 message = f"Supplier payment reference invoice '{ref_inv}' does not match purchase invoice format INV-PUR-YYYYMM-SEQ."

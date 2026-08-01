@@ -29,7 +29,7 @@ def validate_v1(models: List[SalesRegisterModel]) -> List[ValidationResult]:
 def validate_v2(model: SalesRegisterModel) -> ValidationResult:
     """V2: invoice_number matches format INV-SAL-\\d{6}-\\d{3}."""
     inv = model.invoice_number.strip()
-    pattern = r"^INV-SAL-\d{6}-\d{3}$"
+    pattern = r"^INV-SAL-\d{6}-\d{3,6}$"
     passed = bool(re.match(pattern, inv))
     return ValidationResult(
         rule_id="V2",

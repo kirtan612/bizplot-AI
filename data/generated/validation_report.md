@@ -1,7 +1,7 @@
 # Validation Audit Report
 
-**Target Directory**: `data/samples`  
-**Simulation Window**: `2024-04-01` to `2024-05-15`  
+**Target Directory**: `data/generated`  
+**Simulation Window**: `2024-04-01` to `2026-03-31`  
 **Random Seed**: `42`  
 
 ## Rule Validation Results
@@ -12,12 +12,12 @@
 | Supplier Master | 210 | 210 | 0 | ✅ PASS |
 | Customer Master | 750 | 750 | 0 | ✅ PASS |
 | Company Master | 15 | 15 | 0 | ✅ PASS |
-| Steel Market Index | 56 | 56 | 0 | ✅ PASS |
-| Price History | 8232 | 8232 | 0 | ✅ PASS |
-| Purchase Register | 4312 | 4312 | 0 | ✅ PASS |
-| Inventory | 8496 | 8496 | 0 | ✅ PASS |
-| Sales Register | 4998 | 4998 | 0 | ✅ PASS |
-| Cashbook | 3060 | 3060 | 0 | ✅ PASS |
+| Steel Market Index | 840 | 840 | 0 | ✅ PASS |
+| Price History | 108444 | 108444 | 0 | ✅ PASS |
+| Purchase Register | 44828 | 44828 | 0 | ✅ PASS |
+| Inventory | 101724 | 101724 | 0 | ✅ PASS |
+| Sales Register | 77938 | 77938 | 0 | ✅ PASS |
+| Cashbook | 84570 | 84570 | 0 | ✅ PASS |
 
 ---
 

@@ -30,7 +30,7 @@ def validate_v1(models: List[PurchaseRegisterModel]) -> List[ValidationResult]:
 def validate_v2(model: PurchaseRegisterModel) -> ValidationResult:
     """V2: invoice_number matches format INV-PUR-\\d{6}-\\d{3}."""
     inv = model.invoice_number.strip()
-    pattern = r"^INV-PUR-\d{6}-\d{3}$"
+    pattern = r"^INV-PUR-\d{6}-\d{3,6}$"
     passed = bool(re.match(pattern, inv))
     return ValidationResult(
         rule_id="V2",

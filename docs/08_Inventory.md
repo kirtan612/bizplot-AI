@@ -73,7 +73,7 @@ This module enforces physical constraints on transactions, ensuring that sales c
 4. **Valuation Method**: Valuation uses the Standard Costing method. The `valuation_rate_per_kg` is the active `standard_purchase_rate_per_kg` from Price History (06) valid on the `inventory_date`.
 5. **Inbound Link**: `purchased_qty_pcs` must equal the sum of `quantity_pcs` of that product code received in the Purchase Register (07) on that date.
 6. **Outbound Link**: `sold_qty_pcs` must equal the sum of `quantity_pcs` of that product code shipped in the Sales Register (09) on that date.
-7. **Dense Reporting Cadence**: The inventory ledger maintains a dense record sequence. Every active SKU has a row generated for every calendar date, even if no trades occurred (`purchased_qty_pcs = 0` and `sold_qty_pcs = 0`).
+7. **Event-Driven Reporting Cadence**: The inventory ledger maintains an event-driven snapshot record sequence. An inventory row is recorded for a product on a date ONLY if that product had active trade transactions (purchases or sales) on that date, or on the initial opening balance date (`2024-04-01`). Balances for non-transaction dates are reconstructed via forward-filling from the latest event row.
 8. **Initial Balance Seeding**: On the company's `opening_balance_date` (`2024-04-01`), the warehouse is pre-seeded with stock for all active product codes. Initial quantities are based on the category's demand popularity.
 9. **Inactive SKU Phase-out**: Products marked `active = false` in Product Master must have their purchases halted (`purchased_qty_pcs = 0`). Sales continue only until `closing_qty_pcs` reaches 0, after which the SKU is archived.
 10. **Valuation Calculation**: The closing asset valuation is:
@@ -126,8 +126,7 @@ Purchase Register (07)          Sales Register (09)
 
 ## 7. Generation Rules
 
-1. **Volume**: Generate a dense daily record set:
-   $$\text{Total Rows} = 150 \text{ active products} \times 365 \text{ days} = 54,750 \text{ inventory records per FY}$$
+1. **Volume**: Generate an event-driven snapshot record set (~15,000 to 25,000 total inventory records across a 2-year simulation window, representing opening stock seeding plus transaction-active SKU dates).
 2. **Initial Stock Seeding (April 1, 2024)**:
    - `GI` Round pipes (popular plumbers' trade): Seed 100 to 400 pieces per SKU.
    - `MS` Square/Rectangle profiles (fabrication standard): Seed 80 to 300 pieces per SKU.

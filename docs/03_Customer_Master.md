@@ -135,7 +135,7 @@ This holds regardless of registration status (unregistered customers are still c
 
 ## 7. Generation Rules
 
-1. **Volume**: generate 40–50 total customers.
+1. **Volume**: generate 50 total customers.
 
 2. **Customer type distribution**:
    - `Retailer`: 45% (largest trade base, local distribution focus)

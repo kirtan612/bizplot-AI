@@ -81,13 +81,23 @@ def export_to_csv(models: List[Any], file_path: str):
         writer.writerows(dicts)
 
 
-def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/settings.yaml"):
+def run_simulation(is_smoke_test: bool = False, settings_path: str = "config/settings.yaml", override_output_dir: str = None):
     """Main simulation entry point."""
     settings = load_settings(settings_path)
     seed = settings.get("seed", 42)
     rng = random.Random(seed)
 
-    if is_smoke_test:
+    if override_output_dir:
+        output_dir = override_output_dir
+        if is_smoke_test:
+            date_cfg = settings.get("smoke_test_range", {})
+            start_date = date.fromisoformat(date_cfg.get("start_date", "2024-04-01"))
+            end_date = date.fromisoformat(date_cfg.get("end_date", "2024-05-15"))
+        else:
+            date_cfg = settings.get("date_range", {})
+            start_date = date.fromisoformat(date_cfg.get("start_date", "2024-04-01"))
+            end_date = date.fromisoformat(date_cfg.get("end_date", "2026-03-31"))
+    elif is_smoke_test:
         date_cfg = settings.get("smoke_test_range", {})
         start_date = date.fromisoformat(date_cfg.get("start_date", "2024-04-01"))
         end_date = date.fromisoformat(date_cfg.get("end_date", "2024-05-15"))
@@ -140,13 +150,37 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
     inventory_snapshots: List[InventoryModel] = []
     cashbook_entries: List[CashbookModel] = []
     outstanding_invoices: List[dict] = []
-    seen_price_history = set()
 
-    cashbook_balance = Decimal("1000000.00")  # Starting bank balance 1,000,000 ₹
+    purchases_by_num: Dict[str, PurchaseRegisterModel] = {}
+    sales_by_num: Dict[str, SalesRegisterModel] = {}
+    price_history_map: Dict[Tuple[date, str], PriceHistoryModel] = {}
 
     pur_seq = 1
     sal_seq = 1
     vou_seq = 1
+
+    # Inject opening working capital infusion on start_date
+    init_cap_amt = Decimal("500000000.00")
+    cb_init = CashbookModel(
+        entry_id=uuid.UUID(int=rng.getrandbits(128)),
+        entry_date=start_date,
+        voucher_number=f"VOU-{start_date.strftime('%Y%m')}-{vou_seq:03d}",
+        transaction_type=TransactionType.RECEIPT,
+        party_type=PartyType.CAPITAL,
+        party_id=None,
+        party_name="Director Opening Capital Infusion",
+        payment_mode=PaymentMode.BANK_TRANSFER,
+        amount=init_cap_amt,
+        reference_invoice_number=None,
+        opening_balance=Decimal("0.00"),
+        closing_balance=init_cap_amt,
+        narration="Initial business working capital infusion",
+        created_at=datetime.combine(start_date, datetime.min.time(), tzinfo=timezone.utc),
+        updated_at=datetime.combine(start_date, datetime.min.time(), tzinfo=timezone.utc),
+    )
+    vou_seq += 1
+    cashbook_entries.append(cb_init)
+    cashbook_balance = init_cap_amt
 
     current_date = start_date
 
@@ -160,14 +194,13 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
 
         if is_business_day:
             # --- A. PURCHASE EVENTS ---
-            # Check products needing replenishment or random purchase chance
+            # Restock cadence (~5 purchases/business day)
             for p in products:
                 pid = str(p.product_id)
                 st = inventory_state[pid]
 
-                # Trigger purchase if stock <= reorder level or random procurement
-                if st["closing_qty_pcs"] <= st["reorder_level_pcs"] or rng.random() < 0.04:
-                    # Find capable suppliers
+                # Trigger purchase if stock <= reorder level or routine restocking chance
+                if st["closing_qty_pcs"] <= st["reorder_level_pcs"] or rng.random() < 0.035:
                     capable_sups = [
                         s for s in suppliers
                         if p.brand in s.brands_supplied and p.category in s.categories_supplied
@@ -176,20 +209,48 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
                         continue
                     supplier = rng.choice(capable_sups)
 
-                    # Determine base rate
-                    base_rate = (
-                        active_idx.regional_rate_per_kg
-                        if p.brand == Brand.LOCAL_MILLS
-                        else active_idx.national_rate_per_kg
-                    )
-                    
-                    # Brand multiplier & category adjustment
-                    b_mult = Decimal("1.15") if p.brand == Brand.APL_APOLLO else (Decimal("1.08") if p.brand == Brand.HI_TECH else Decimal("1.00"))
-                    c_adj = Decimal("8.00") if p.category == Category.GI else (Decimal("5.00") if p.category == Category.GP else Decimal("0.00"))
-                    
-                    list_price = round((base_rate * b_mult) + c_adj, 2)
-                    disc_pct = Decimal(str(round(rng.uniform(3.0, 7.0), 2)))
-                    unit_price = round(list_price * (Decimal("1.00") - (disc_pct / Decimal("100.00"))), 2)
+                    ph_key = (current_date, pid)
+                    if ph_key in price_history_map:
+                        ph = price_history_map[ph_key]
+                        base_rate = ph.base_index_rate
+                        b_mult = ph.brand_multiplier
+                        c_adj = ph.category_adjustment
+                        list_price = ph.calculated_list_price_per_kg
+                        disc_pct = ph.purchase_discount_pct
+                        unit_price = ph.effective_purchase_price_per_kg
+                    else:
+                        base_rate = (
+                            active_idx.regional_rate_per_kg
+                            if p.brand == Brand.LOCAL_MILLS
+                            else active_idx.national_rate_per_kg
+                        )
+                        b_mult = Decimal("1.15") if p.brand == Brand.APL_APOLLO else (Decimal("1.08") if p.brand == Brand.HI_TECH else Decimal("1.00"))
+                        c_adj = Decimal("8.00") if p.category == Category.GI else (Decimal("5.00") if p.category == Category.GP else Decimal("0.00"))
+                        list_price = round((base_rate * b_mult) + c_adj, 2)
+                        disc_pct = Decimal(str(round(rng.uniform(3.0, 7.0), 2)))
+                        unit_price = round(list_price * (Decimal("1.00") - (disc_pct / Decimal("100.00"))), 2)
+                        
+                        default_margin = Decimal("10.00")
+                        eff_sal = round(list_price * (Decimal("1.00") + (default_margin / Decimal("100.00"))), 2)
+                        ph_model = PriceHistoryModel(
+                            price_id=uuid.UUID(int=rng.getrandbits(128)),
+                            effective_date=current_date,
+                            product_id=p.product_id,
+                            product_code=p.product_code,
+                            index_id=active_idx.index_id,
+                            base_index_rate=base_rate,
+                            brand_multiplier=b_mult,
+                            category_adjustment=c_adj,
+                            calculated_list_price_per_kg=list_price,
+                            purchase_discount_pct=disc_pct,
+                            effective_purchase_price_per_kg=unit_price,
+                            sales_margin_pct=default_margin,
+                            effective_sales_price_per_kg=eff_sal,
+                            created_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
+                            updated_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
+                        )
+                        price_history_map[ph_key] = ph_model
+                        price_history.append(ph_model)
 
                     pur_qty = rng.choice([200, 300, 500])
                     pur_wt = round(Decimal(str(pur_qty)) * (p.weight_per_meter * p.length), 2)
@@ -207,7 +268,7 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
                     inv_amt = taxable + tot_gst
 
                     due_date = current_date + timedelta(days=supplier.credit_period_days)
-                    inv_num = f"INV-PUR-{current_date.strftime('%Y%m')}-{pur_seq:03d}"
+                    inv_num = f"INV-PUR-{current_date.strftime('%Y%m')}-{pur_seq:04d}"
                     pur_seq += 1
 
                     pur_model = PurchaseRegisterModel(
@@ -237,38 +298,13 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
                         updated_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
                     )
 
-                    # Validate purchase row immediately
                     p_res = purchase_register_validator.validate_batch([pur_model], supplier_map, product_map)
                     p_fails = [r for r in p_res if not r.passed]
                     if p_fails:
                         raise ValueError(f"Purchase validation failed on {current_date}: {[f.message for f in p_fails]}")
 
                     purchases.append(pur_model)
-
-                    # Price History record for Purchase
-                    ph_key = (current_date, str(p.product_id))
-                    if ph_key not in seen_price_history:
-                        seen_price_history.add(ph_key)
-                        default_margin = Decimal("10.00")
-                        eff_sal = round(list_price * (Decimal("1.00") + (default_margin / Decimal("100.00"))), 2)
-                        ph_pur = PriceHistoryModel(
-                            price_id=uuid.UUID(int=rng.getrandbits(128)),
-                            effective_date=current_date,
-                            product_id=p.product_id,
-                            product_code=p.product_code,
-                            index_id=active_idx.index_id,
-                            base_index_rate=base_rate,
-                            brand_multiplier=b_mult,
-                            category_adjustment=c_adj,
-                            calculated_list_price_per_kg=list_price,
-                            purchase_discount_pct=disc_pct,
-                            effective_purchase_price_per_kg=unit_price,
-                            sales_margin_pct=default_margin,
-                            effective_sales_price_per_kg=eff_sal,
-                            created_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
-                            updated_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
-                        )
-                        price_history.append(ph_pur)
+                    purchases_by_num[inv_num] = pur_model
 
                     # Update Inventory running state
                     old_wt = st["closing_weight_kg"]
@@ -293,9 +329,9 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
                     })
 
             # --- B. SALES EVENTS ---
-            # Random sale event chance on business days
-            if rng.random() < 0.65:
-                # Pick product with AVAILABLE RUNNING STOCK
+            # Issue 1 Fix: 8 to 12 sales per business day
+            num_sales = rng.randint(8, 12)
+            for _ in range(num_sales):
                 available_products = [
                     p for p in products
                     if inventory_state[str(p.product_id)]["closing_qty_pcs"] > 0
@@ -307,41 +343,74 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
 
                     customer = rng.choice(customers)
 
-                    # Quantity limited to AVAILABLE STOCK
-                    req_qty = rng.choice([50, 100, 150, 200])
+                    req_qty = rng.choice([20, 30, 50, 80, 100])
                     sal_qty = min(req_qty, st["closing_qty_pcs"])
+                    if sal_qty <= 0:
+                        continue
 
                     sal_wt = round(Decimal(str(sal_qty)) * (p.weight_per_meter * p.length), 2)
 
-                    # Price calculation
-                    base_rate = (
-                        active_idx.regional_rate_per_kg
-                        if p.brand == Brand.LOCAL_MILLS
-                        else active_idx.national_rate_per_kg
-                    )
-                    b_mult = Decimal("1.15") if p.brand == Brand.APL_APOLLO else (Decimal("1.08") if p.brand == Brand.HI_TECH else Decimal("1.00"))
-                    c_adj = Decimal("8.00") if p.category == Category.GI else (Decimal("5.00") if p.category == Category.GP else Decimal("0.00"))
-                    list_price = round((base_rate * b_mult) + c_adj, 2)
+                    ph_key = (current_date, pid)
+                    if ph_key in price_history_map:
+                        ph = price_history_map[ph_key]
+                        base_rate = ph.base_index_rate
+                        b_mult = ph.brand_multiplier
+                        c_adj = ph.category_adjustment
+                        list_price = ph.calculated_list_price_per_kg
+                        sales_margin = ph.sales_margin_pct
+                        unit_price = ph.effective_sales_price_per_kg
+                    else:
+                        base_rate = (
+                            active_idx.regional_rate_per_kg
+                            if p.brand == Brand.LOCAL_MILLS
+                            else active_idx.national_rate_per_kg
+                        )
+                        b_mult = Decimal("1.15") if p.brand == Brand.APL_APOLLO else (Decimal("1.08") if p.brand == Brand.HI_TECH else Decimal("1.00"))
+                        c_adj = Decimal("8.00") if p.category == Category.GI else (Decimal("5.00") if p.category == Category.GP else Decimal("0.00"))
+                        list_price = round((base_rate * b_mult) + c_adj, 2)
+                        sales_margin = Decimal(str(round(rng.uniform(8.0, 15.0), 2)))
+                        unit_price = round(list_price * (Decimal("1.00") + (sales_margin / Decimal("100.00"))), 2)
 
-                    sales_margin = Decimal(str(round(rng.uniform(8.0, 15.0), 2)))
-                    unit_price = round(list_price * (Decimal("1.00") + (sales_margin / Decimal("100.00"))), 2)
+                        default_disc = Decimal("5.00")
+                        eff_pur = round(list_price * (Decimal("1.00") - (default_disc / Decimal("100.00"))), 2)
+                        ph_model = PriceHistoryModel(
+                            price_id=uuid.UUID(int=rng.getrandbits(128)),
+                            effective_date=current_date,
+                            product_id=p.product_id,
+                            product_code=p.product_code,
+                            index_id=active_idx.index_id,
+                            base_index_rate=base_rate,
+                            brand_multiplier=b_mult,
+                            category_adjustment=c_adj,
+                            calculated_list_price_per_kg=list_price,
+                            purchase_discount_pct=default_disc,
+                            effective_purchase_price_per_kg=eff_pur,
+                            sales_margin_pct=sales_margin,
+                            effective_sales_price_per_kg=unit_price,
+                            created_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
+                            updated_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
+                        )
+                        price_history_map[ph_key] = ph_model
+                        price_history.append(ph_model)
+
                     taxable = round(sal_wt * unit_price, 2)
 
-                    # Check credit limit rule V14
-                    if taxable <= customer.credit_limit:
-                        is_interstate = (customer.state != COMPANY_HOME_STATE)
-                        cgst_r = Decimal("0.00") if is_interstate else Decimal("9.00")
-                        sgst_r = Decimal("0.00") if is_interstate else Decimal("9.00")
-                        igst_r = Decimal("18.00") if is_interstate else Decimal("0.00")
+                    is_interstate = (customer.state != COMPANY_HOME_STATE)
+                    cgst_r = Decimal("0.00") if is_interstate else Decimal("9.00")
+                    sgst_r = Decimal("0.00") if is_interstate else Decimal("9.00")
+                    igst_r = Decimal("18.00") if is_interstate else Decimal("0.00")
 
-                        cgst_amt = round(taxable * (cgst_r / Decimal("100.00")), 2)
-                        sgst_amt = round(taxable * (sgst_r / Decimal("100.00")), 2)
-                        igst_amt = round(taxable * (igst_r / Decimal("100.00")), 2)
-                        tot_gst = cgst_amt + sgst_amt + igst_amt
-                        inv_amt = taxable + tot_gst
+                    cgst_amt = round(taxable * (cgst_r / Decimal("100.00")), 2)
+                    sgst_amt = round(taxable * (sgst_r / Decimal("100.00")), 2)
+                    igst_amt = round(taxable * (igst_r / Decimal("100.00")), 2)
+                    tot_gst = cgst_amt + sgst_amt + igst_amt
+                    inv_amt = taxable + tot_gst
+
+                    # Check credit limit rule V14 on invoice_amount
+                    if inv_amt <= customer.credit_limit:
 
                         due_date = current_date + timedelta(days=customer.credit_period_days)
-                        inv_num = f"INV-SAL-{current_date.strftime('%Y%m')}-{sal_seq:03d}"
+                        inv_num = f"INV-SAL-{current_date.strftime('%Y%m')}-{sal_seq:04d}"
                         sal_seq += 1
 
                         sal_model = SalesRegisterModel(
@@ -371,44 +440,17 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
                             updated_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
                         )
 
-                        # Validate sale row immediately
                         s_res = sales_register_validator.validate_batch([sal_model], customer_map, product_map)
                         s_fails = [r for r in s_res if not r.passed]
                         if s_fails:
                             raise ValueError(f"Sales validation failed on {current_date}: {[f.message for f in s_fails]}")
 
                         sales.append(sal_model)
+                        sales_by_num[inv_num] = sal_model
 
-                        # Price History record for Sale
-                        ph_key = (current_date, str(p.product_id))
-                        if ph_key not in seen_price_history:
-                            seen_price_history.add(ph_key)
-                            default_disc = Decimal("5.00")
-                            eff_pur = round(list_price * (Decimal("1.00") - (default_disc / Decimal("100.00"))), 2)
-                            ph_sal = PriceHistoryModel(
-                                price_id=uuid.UUID(int=rng.getrandbits(128)),
-                                effective_date=current_date,
-                                product_id=p.product_id,
-                                product_code=p.product_code,
-                                index_id=active_idx.index_id,
-                                base_index_rate=base_rate,
-                                brand_multiplier=b_mult,
-                                category_adjustment=c_adj,
-                                calculated_list_price_per_kg=list_price,
-                                purchase_discount_pct=default_disc,
-                                effective_purchase_price_per_kg=eff_pur,
-                                sales_margin_pct=sales_margin,
-                                effective_sales_price_per_kg=unit_price,
-                                created_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
-                                updated_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
-                            )
-                            price_history.append(ph_sal)
-
-                        # Update Inventory running state (decrease stock)
                         st["closing_qty_pcs"] -= sal_qty
                         st["closing_weight_kg"] = round(st["closing_weight_kg"] - sal_wt, 2)
 
-                        # Register for Cashbook receipt
                         outstanding_invoices.append({
                             "type": "SALE",
                             "inv_num": inv_num,
@@ -420,16 +462,13 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
                             "status": "UNPAID",
                         })
 
-        # --- C. DAILY INVENTORY SNAPSHOT ---
-        # Generate daily inventory snapshot for every product
+        # --- C. DAILY INVENTORY SNAPSHOT (EVENT-DRIVEN) ---
+        # Generate inventory snapshot ONLY on start_date or when trade activity occurs for SKU
         for p in products:
             pid = str(p.product_id)
             d_open = daily_opening[pid]
             d_close = inventory_state[pid]
 
-            pur_pcs = d_close["closing_qty_pcs"] - d_open["closing_qty_pcs"] + (0 if d_close["closing_qty_pcs"] >= d_open["closing_qty_pcs"] else 0)
-            # Calculate daily flow accurately
-            # Get daily purchases & sales for this product on current_date
             day_purs = [x for x in purchases if x.product_id == p.product_id and x.purchase_date == current_date]
             day_sals = [x for x in sales if x.product_id == p.product_id and x.sales_date == current_date]
 
@@ -439,39 +478,41 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
             day_sal_pcs = sum(x.quantity_pcs for x in day_sals)
             day_sal_wt = sum(x.total_weight_kg for x in day_sals)
 
-            close_pcs = d_open["closing_qty_pcs"] + day_pur_pcs - day_sal_pcs
-            close_wt = round(d_open["closing_weight_kg"] + day_pur_wt - day_sal_wt, 2)
-            unit_cost = d_close["unit_cost_per_kg"]
-            val = round(close_wt * unit_cost, 2)
-            reorder_flag = (close_pcs <= d_close["reorder_level_pcs"])
+            # Record snapshot only on start_date or if product had purchase/sales activity on current_date
+            if current_date == start_date or day_pur_pcs > 0 or day_sal_pcs > 0:
+                close_pcs = d_open["closing_qty_pcs"] + day_pur_pcs - day_sal_pcs
+                close_wt = round(d_open["closing_weight_kg"] + day_pur_wt - day_sal_wt, 2)
+                unit_cost = d_close["unit_cost_per_kg"]
+                val = round(close_wt * unit_cost, 2)
+                reorder_flag = (close_pcs <= d_close["reorder_level_pcs"])
 
-            inv_snap = InventoryModel(
-                inventory_id=uuid.UUID(int=rng.getrandbits(128)),
-                snapshot_date=current_date,
-                product_id=p.product_id,
-                product_code=p.product_code,
-                opening_qty_pcs=d_open["closing_qty_pcs"],
-                opening_weight_kg=d_open["closing_weight_kg"],
-                purchased_qty_pcs=day_pur_pcs,
-                purchased_weight_kg=day_pur_wt,
-                sold_qty_pcs=day_sal_pcs,
-                sold_weight_kg=day_sal_wt,
-                closing_qty_pcs=close_pcs,
-                closing_weight_kg=close_wt,
-                unit_cost_per_kg=unit_cost,
-                inventory_valuation=val,
-                reorder_level_pcs=d_close["reorder_level_pcs"],
-                reorder_flag=reorder_flag,
-                created_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
-                updated_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
-            )
-            inventory_snapshots.append(inv_snap)
+                inv_snap = InventoryModel(
+                    inventory_id=uuid.UUID(int=rng.getrandbits(128)),
+                    snapshot_date=current_date,
+                    product_id=p.product_id,
+                    product_code=p.product_code,
+                    opening_qty_pcs=d_open["closing_qty_pcs"],
+                    opening_weight_kg=d_open["closing_weight_kg"],
+                    purchased_qty_pcs=day_pur_pcs,
+                    purchased_weight_kg=day_pur_wt,
+                    sold_qty_pcs=day_sal_pcs,
+                    sold_weight_kg=day_sal_wt,
+                    closing_qty_pcs=close_pcs,
+                    closing_weight_kg=close_wt,
+                    unit_cost_per_kg=unit_cost,
+                    inventory_valuation=val,
+                    reorder_level_pcs=d_close["reorder_level_pcs"],
+                    reorder_flag=reorder_flag,
+                    created_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
+                    updated_at=datetime.combine(current_date, datetime.min.time(), tzinfo=timezone.utc),
+                )
+                inventory_snapshots.append(inv_snap)
 
         # --- D. CASHBOOK SETTLEMENTS ---
         # 1. Process due Customer Receipts first (increasing cash balance)
         due_sales = [inv for inv in outstanding_invoices if inv["type"] == "SALE" and inv["due_date"] <= current_date and inv["status"] == "UNPAID"]
         for inv in due_sales:
-            vou_num = f"VOU-{current_date.strftime('%Y%m')}-{vou_seq:03d}"
+            vou_num = f"VOU-{current_date.strftime('%Y%m')}-{vou_seq:04d}"
             vou_seq += 1
             open_bal = cashbook_balance
             close_bal = round(open_bal + inv["amount"], 2)
@@ -496,16 +537,20 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
             )
             cashbook_entries.append(cb_model)
             inv["status"] = "PAID"
+            
+            # Issue 2 Fix: Sync payment_status on SalesRegisterModel
+            if inv["inv_num"] in sales_by_num:
+                sales_by_num[inv["inv_num"]].payment_status = PaymentStatus.PAID
 
         # 2. Process due Supplier Payments second (decreasing cash balance)
         due_purchases = [inv for inv in outstanding_invoices if inv["type"] == "PURCHASE" and inv["due_date"] <= current_date and inv["status"] == "UNPAID"]
         for inv in due_purchases:
             # Inject capital infusion if cash balance is insufficient to prevent overdraft
             if cashbook_balance < inv["amount"]:
-                cap_num = f"VOU-{current_date.strftime('%Y%m')}-{vou_seq:03d}"
+                cap_num = f"VOU-{current_date.strftime('%Y%m')}-{vou_seq:04d}"
                 vou_seq += 1
                 needed = inv["amount"] - cashbook_balance
-                cap_amt = max(Decimal("1000000.00"), round(needed + Decimal("500000.00"), 2))
+                cap_amt = max(Decimal("50000000.00"), round(needed + Decimal("50000000.00"), 2))
                 cap_open = cashbook_balance
                 cap_close = round(cap_open + cap_amt, 2)
                 cashbook_balance = cap_close
@@ -529,7 +574,7 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
                 )
                 cashbook_entries.append(cb_cap)
 
-            vou_num = f"VOU-{current_date.strftime('%Y%m')}-{vou_seq:03d}"
+            vou_num = f"VOU-{current_date.strftime('%Y%m')}-{vou_seq:04d}"
             vou_seq += 1
             open_bal = cashbook_balance
             close_bal = round(open_bal - inv["amount"], 2)
@@ -554,6 +599,10 @@ def run_simulation(is_smoke_test: bool = True, settings_path: str = "config/sett
             )
             cashbook_entries.append(cb_model)
             inv["status"] = "PAID"
+
+            # Issue 2 Fix: Sync payment_status on PurchaseRegisterModel
+            if inv["inv_num"] in purchases_by_num:
+                purchases_by_num[inv["inv_num"]].payment_status = PaymentStatus.PAID
 
         # Step date
         current_date += timedelta(days=1)
