@@ -1,0 +1,17 @@
+# Synthetic Data Pipeline Configuration Settings
+
+# Determinism
+seed: 42
+
+# Full 2-Year Simulation Window
+date_range:
+  start_date: "2024-04-01"
+  end_date: "2026-03-31"
+
+# 6-Week Smoke Test Window
+smoke_test_range:
+  start_date: "2024-04-01"
+  end_date: "2024-05-15"
+
+# Output settings
+output_format: "csv"

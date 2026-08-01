@@ -205,8 +205,13 @@ def validate_batch(
         if isinstance(row, CashbookModel):
             models.append(row)
         else:
+            row_dict = dict(row)
+            if row_dict.get("party_id") == "":
+                row_dict["party_id"] = None
+            if row_dict.get("reference_invoice_number") == "":
+                row_dict["reference_invoice_number"] = None
             try:
-                model = CashbookModel(**row)
+                model = CashbookModel(**row_dict)
                 models.append(model)
             except Exception as e:
                 results.append(ValidationResult(
