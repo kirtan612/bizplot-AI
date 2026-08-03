@@ -14,8 +14,8 @@
 | `03_Customer_Master.csv` | Customer Master | 50 |
 | `04_Company_Master.csv` | Company Master | 1 |
 | `05_Steel_Market_Index.csv` | Steel Market Index | 105 |
-| `06_Price_History.csv` | Price History | 9037 |
-| `07_Purchase_Register.csv` | Purchase Register | 3202 |
-| `08_Inventory.csv` | Inventory | 8477 |
-| `09_Sales_Register.csv` | Sales Register | 5567 |
-| `10_Cashbook.csv` | Cashbook | 8457 |
+| `06_Price_History.csv` | Price History | 9023 |
+| `07_Purchase_Register.csv` | Purchase Register | 3219 |
+| `08_Inventory.csv` | Inventory | 8400 |
+| `09_Sales_Register.csv` | Sales Register | 5559 |
+| `10_Cashbook.csv` | Cashbook | 8467 |

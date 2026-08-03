@@ -13,11 +13,11 @@
 | Customer Master | 750 | 750 | 0 | ✅ PASS |
 | Company Master | 15 | 15 | 0 | ✅ PASS |
 | Steel Market Index | 840 | 840 | 0 | ✅ PASS |
-| Price History | 108444 | 108444 | 0 | ✅ PASS |
-| Purchase Register | 44828 | 44828 | 0 | ✅ PASS |
-| Inventory | 101724 | 101724 | 0 | ✅ PASS |
-| Sales Register | 77938 | 77938 | 0 | ✅ PASS |
-| Cashbook | 84570 | 84570 | 0 | ✅ PASS |
+| Price History | 108276 | 108276 | 0 | ✅ PASS |
+| Purchase Register | 45066 | 45066 | 0 | ✅ PASS |
+| Inventory | 100800 | 100800 | 0 | ✅ PASS |
+| Sales Register | 77826 | 77826 | 0 | ✅ PASS |
+| Cashbook | 84670 | 84670 | 0 | ✅ PASS |
 
 ---
 

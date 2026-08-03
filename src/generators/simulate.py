@@ -133,8 +133,8 @@ def run_simulation(is_smoke_test: bool = False, settings_path: str = "config/set
     print("Initializing chronological state engine...")
     inventory_state: Dict[str, dict] = {}
     for p in products:
-        # Initial opening stock (some products have stock, some start 0)
-        init_qty = rng.choice([0, 100, 200, 300])
+        # Initial opening stock starts at 0 so all stock originates from Purchase Register
+        init_qty = 0
         init_wt = round(Decimal(str(init_qty)) * (p.weight_per_meter * p.length), 2)
         inventory_state[str(p.product_id)] = {
             "product_code": p.product_code,

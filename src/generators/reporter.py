@@ -19,6 +19,7 @@ from src.validators import (
     inventory_validator,
     sales_register_validator,
     cashbook_validator,
+    cross_table_validator,
 )
 
 
@@ -107,3 +108,8 @@ def generate_reports(
         for module_name, data_list in datasets.items():
             fname = file_prefix_map.get(module_name, f"{module_name}.csv")
             f.write(f"| `{fname}` | {module_name} | {len(data_list)} |\n")
+
+    # 3. Generate cross_table_validation_report.md
+    cross_report_path = os.path.join(output_dir, "cross_table_validation_report.md")
+    cross_table_validator.run_cross_table_validation(output_dir, cross_report_path)
+
