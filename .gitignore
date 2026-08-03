@@ -26,6 +26,8 @@ wheels/
 # Jupyter Notebook
 .ipynb_checkpoints
 *.ipynb
+!notebooks/*.ipynb
+
 
 # Data files
 *.csv

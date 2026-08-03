@@ -13,7 +13,7 @@ import csv
 import uuid
 from datetime import datetime, date, timedelta, timezone
 from decimal import Decimal
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 
 from src.schemas.product_master import ProductMasterModel, Brand, Category, Shape
 from src.schemas.supplier_master import SupplierMasterModel
