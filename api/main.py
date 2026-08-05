@@ -24,6 +24,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from api.auth.router import router as auth_router
 from api.routers.master_data import router as master_data_router
 from api.routers.transactions import router as transactions_router
+from api.routers.inventory import router as inventory_router
+from api.routers.dashboard import router as dashboard_router
+from api.routers.predictions import router as predictions_router
 
 app = FastAPI(
     title="BizPilot AI API",
@@ -47,6 +50,9 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(master_data_router, prefix="/api", tags=["Master Data"])
 app.include_router(transactions_router, prefix="/api", tags=["Transaction Registers"])
+app.include_router(inventory_router, prefix="/api", tags=["Inventory"])
+app.include_router(dashboard_router, prefix="/api", tags=["Dashboard"])
+app.include_router(predictions_router, prefix="/api", tags=["AI Predictions"])
 
 
 @app.get("/api/health", tags=["Health"])

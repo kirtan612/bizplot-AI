@@ -295,5 +295,102 @@ curl -X GET "http://127.0.0.1:8000/api/suppliers?page=1&page_size=1" \
 }
 ```
 
+#### 5. Test Dashboard KPIs (`GET /api/dashboard/kpis`)
+
+##### Admin Token (Includes `cash_position` key):
+```bash
+curl -X GET "http://127.0.0.1:8000/api/dashboard/kpis" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+```
+*Admin Response:*
+```json
+{
+  "total_active_products": 140,
+  "products_below_reorder": 12,
+  "sales_last_30_days": 18450230.50,
+  "purchases_last_30_days": 12340100.00,
+  "cash_position": 4520190.75
+}
+```
+
+##### Staff Token (Omits `cash_position` key completely):
+```bash
+curl -X GET "http://127.0.0.1:8000/api/dashboard/kpis" \
+  -H "Authorization: Bearer <STAFF_TOKEN>"
+```
+*Staff Response (Key `cash_position` is literally omitted from JSON):*
+```json
+{
+  "total_active_products": 140,
+  "products_below_reorder": 12,
+  "sales_last_30_days": 18450230.50,
+  "purchases_last_30_days": 12340100.00
+}
+```
+
+#### 6. Test Gated AI Predictions (`GET /api/predictions/price/{product_id}`)
+
+##### Response (HTTP 503 Service Unavailable):
+```bash
+curl -X GET "http://127.0.0.1:8000/api/predictions/price/30e071a7-50a9-4f89-9c08-4d2d8db1d7f7" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+```
+*503 Service Unavailable Output:*
+```json
+{
+  "status": "unavailable",
+  "model_name": "price_prediction",
+  "message": "'price_prediction' prediction model not yet trained or available for product 30e071a7-50a9-4f89-9c08-4d2d8db1d7f7.",
+  "product_id": "30e071a7-50a9-4f89-9c08-4d2d8db1d7f7"
+```
+
+---
+
+## 🎨 React Design System & Component Library (`frontend/`)
+
+### Architecture & Tech Stack
+- **Framework**: React 19, TypeScript, Vite
+- **Styling**: TailwindCSS v4 (`@tailwindcss/postcss`), Custom CSS Variables, Glassmorphism panels
+- **Icons**: Lucide Icons
+- **Animation**: Framer Motion (modal scales, hover lifts, pulse shimmers)
+- **Data Charts**: Recharts styled with token palettes
+
+### Color Tokens
+- **Background**: `#09090B`
+- **Surface**: `#111113`
+- **Elevated Surface**: `#18181B`
+- **Primary Accent**: `#7C3AED`
+- **Secondary Accent**: `#A855F7`
+- **AI Accent**: `#C084FC`
+- **Text Primary**: `#FAFAFA`
+- **Text Secondary**: `#A1A1AA`
+
+---
+
+### Previewing the Component Library
+
+To launch the isolated design system component gallery preview:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open your browser at `http://localhost:5173/`.
+
+### Interactive Gallery Sections Demonstrated:
+1. **Design Tokens & Palette**: Visual color blocks and token hex codes.
+2. **Buttons & Badges**: All button variants (Primary, Secondary, Outline, Ghost, Destructive, AI) with loading states & status badges.
+3. **Form Controls**: Input, Select dropdowns, Debounced Search bar, Date Range Picker.
+4. **AI Widget Shell ("Ask BizPilot AI")**: Interactive state toggling between:
+   - **`answered`**: AI response with confidence score.
+   - **`loading`**: Typing shimmer pulse animation.
+   - **`unavailable`**: HTTP 503 Gated status for Milestone 4 model training.
+5. **Data Table**: Sortable columns, pagination footer (max 100 page size), state switchers for Data, Loading Skeleton, Empty State, and Error State.
+6. **Charts**: Recharts wrappers (`AreaChartWrapper`, `LineChartWrapper`) with Framer Motion entrance animations.
+7. **Overlay & Nav**: Interactive Command Palette (`Cmd+K`), Dialog Modal, Sidebar Nav Items (with role-gated cosmetic state), and Toast Notifications.
+
+
+
 
 
