@@ -203,4 +203,97 @@ WHERE import_job_id = '<JOB_UUID>' AND level = 'ERROR'
 ORDER BY row_ref;
 ```
 
+---
+
+## ⚡ FastAPI Layer & Role-Based Access Control (`api/`)
+
+### Starting the Server
+Start the Uvicorn dev server on `http://127.0.0.1:8000`:
+```bash
+uvicorn api.main:app --reload
+```
+- Interactive OpenAPI Docs: `http://127.0.0.1:8000/docs`
+- ReDoc API Docs: `http://127.0.0.1:8000/redoc`
+
+---
+
+### Verification via cURL Commands
+
+#### 1. Login as Admin (`admin_demo`)
+```bash
+curl -X POST "http://127.0.0.1:8000/api/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin_demo", "password": "AdminDemo123!"}'
+```
+*Response Output:*
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1Ni...",
+  "token_type": "bearer",
+  "role": "admin",
+  "expires_in": 3600
+}
+```
+
+#### 2. Login as Staff (`staff_demo`)
+```bash
+curl -X POST "http://127.0.0.1:8000/api/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "staff_demo", "password": "StaffDemo123!"}'
+```
+
+#### 3. Test Restricted Route (`GET /api/cashbook`) — Role Enforcement
+
+##### Admin Token (Allowed — 200 OK):
+```bash
+curl -X GET "http://127.0.0.1:8000/api/cashbook?page=1&page_size=2" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+```
+
+##### Staff Token (Forbidden — 403 Forbidden):
+```bash
+curl -X GET "http://127.0.0.1:8000/api/cashbook" \
+  -H "Authorization: Bearer <STAFF_TOKEN>"
+```
+*Response Output (403 Forbidden):*
+```json
+{
+  "detail": "Forbidden: Action requires one of roles ['admin']"
+}
+```
+
+#### 4. Test Role-Stripped Response Fields (`GET /api/suppliers`)
+
+##### Admin Token (Includes `credit_period_days`):
+```bash
+curl -X GET "http://127.0.0.1:8000/api/suppliers?page=1&page_size=1" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+```
+
+##### Staff Token (Strips `credit_period_days`):
+```bash
+curl -X GET "http://127.0.0.1:8000/api/suppliers?page=1&page_size=1" \
+  -H "Authorization: Bearer <STAFF_TOKEN>"
+```
+*Staff Response (Confidential credit fields automatically omitted):*
+```json
+{
+  "total": 14,
+  "page": 1,
+  "page_size": 1,
+  "total_pages": 14,
+  "items": [
+    {
+      "supplier_id": "b7d159ef-1e24-4f01-a1bf-4b2a64c4c2a1",
+      "supplier_code": "SUP-MILL-001",
+      "supplier_name": "APL Apollo Tubes Ltd",
+      "supplier_tier": "Tier-1 Manufacturer",
+      "brands_supplied": ["APL Apollo"],
+      "categories_supplied": ["GI", "MS", "GP"]
+    }
+  ]
+}
+```
+
+
 

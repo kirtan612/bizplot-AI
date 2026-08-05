@@ -1,0 +1,70 @@
+"""
+BizPilot AI - FastAPI Main Application Entrance & Router Wiring.
+
+Mounts routers under /api:
+  /api/auth       -> Authentication & Token Issuance
+  /api/products   -> Product Master
+  /api/suppliers  -> Supplier Master
+  /api/customers  -> Customer Master
+  /api/company    -> Company Master
+  /api/purchases  -> Purchase Register
+  /api/sales      -> Sales Register
+  /api/cashbook   -> Cashbook (Admin Only)
+"""
+
+import sys
+import os
+from pathlib import Path
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+# Ensure project root is on sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from api.auth.router import router as auth_router
+from api.routers.master_data import router as master_data_router
+from api.routers.transactions import router as transactions_router
+
+app = FastAPI(
+    title="BizPilot AI API",
+    description="FastAPI Backend for GI/MS Steel Pipe Distribution & Analytics System",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Wire Routers under /api prefix
+app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
+app.include_router(master_data_router, prefix="/api", tags=["Master Data"])
+app.include_router(transactions_router, prefix="/api", tags=["Transaction Registers"])
+
+
+@app.get("/api/health", tags=["Health"])
+def health_check():
+    """Service health check endpoint."""
+    return {"status": "ok", "service": "BizPilot AI API"}
+
+
+@app.get("/", tags=["Health"])
+def root():
+    """Root redirect / information endpoint."""
+    return {
+        "message": "Welcome to BizPilot AI API",
+        "docs": "/docs",
+        "health": "/api/health"
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
