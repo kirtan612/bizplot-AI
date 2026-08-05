@@ -154,3 +154,53 @@ To onboard a new tenant (e.g., Company #2) in the future, **zero database schema
 4. **Query & Data Isolation**:
    All ORM queries filter on `company_id`. Row-Level Security (RLS) policies can be attached to `company_id` on PostgreSQL if database-level strict isolation is desired in future releases.
 
+---
+
+## 🚀 Data Import Pipeline (`scripts/load_to_db.py`)
+
+### Overview
+The data import pipeline (`scripts/load_to_db.py`) provides an idempotent, transactional, and schema-validated mechanism for loading CSV datasets into PostgreSQL or SQLite databases.
+
+### Key Capabilities
+- **Single-Tenant & Multi-Tenant Support**: Reads the active target company from the database at runtime and tags every inserted row with `company_id`.
+- **Topological Dependency Order**: Loads tables in strict foreign key order (`Products` $\rightarrow$ `Suppliers` $\rightarrow$ `Customers` $\rightarrow$ `Company Master` $\rightarrow$ `Steel Index` $\rightarrow$ `Price History` $\rightarrow$ `Purchases` $\rightarrow$ `Inventory` $\rightarrow$ `Sales` $\rightarrow$ `Cashbook`).
+- **Idempotency & Upsert**: Natural key matching (`company_id, product_code`, `company_id, invoice_number`, etc.) prevents duplicate rows on repeated executions.
+- **Transaction Isolation**: Each file load runs within its own savepoint transaction. If one file encouters an unexpected failure, previously loaded files remain intact.
+- **Granular Error Logging**: Row-level validation errors (missing fields, wrong types, missing foreign keys) are logged to `import_logs` (`level='ERROR'`, `row_ref=line_number`) and skipped without aborting valid rows.
+
+### Usage Commands
+
+#### 1. Pre-Flight Validation (`--dry-run`)
+Runs all parsing, Pydantic schema validation, and FK integrity checks without modifying the database:
+```bash
+python scripts/load_to_db.py --source data/generated/ --dry-run
+```
+
+#### 2. Execute Real Import Load
+Loads all CSV datasets into the database:
+```bash
+python scripts/load_to_db.py --source data/generated/
+```
+
+#### 3. Import to Local SQLite File
+For dry-run or local testing using a file-based SQLite database:
+```bash
+python scripts/load_to_db.py --source data/generated/ --sqlite
+```
+
+### Inspecting `import_logs` & Troubleshooting
+Every execution creates a record in `import_jobs`, individual file metadata in `import_files`, and detailed execution logs in `import_logs`.
+
+To query import job status and review error logs in SQL:
+```sql
+-- Check job summary and status
+SELECT id, company_id, status, started_at, finished_at FROM import_jobs ORDER BY started_at DESC;
+
+-- View errors and line references for a specific job
+SELECT level, message, row_ref, created_at 
+FROM import_logs 
+WHERE import_job_id = '<JOB_UUID>' AND level = 'ERROR' 
+ORDER BY row_ref;
+```
+
+
