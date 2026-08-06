@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, date, timezone
+# pyrefly: ignore [missing-import]
 import pytest
 
 from src.schemas.company_master import CompanyMasterModel, CompanyType
