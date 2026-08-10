@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Shield, ArrowRight } from 'lucide-react';
 import { MagneticButton } from '../../components/MagneticButton';
@@ -69,13 +70,18 @@ export const Navbar: React.FC = () => {
 
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center space-x-4">
-          <button className="text-xs uppercase tracking-wider font-semibold text-neutral-300 hover:text-white transition-colors px-3 py-2 cursor-pointer">
+          <Link
+            to="/signin"
+            className="text-xs uppercase tracking-wider font-semibold text-neutral-300 hover:text-white transition-colors px-3 py-2 cursor-pointer"
+          >
             Login
-          </button>
-          <MagneticButton variant="glow" size="sm">
-            <span>Get Started</span>
-            <ArrowRight className="w-3.5 h-3.5 ml-1.5 inline-block" />
-          </MagneticButton>
+          </Link>
+          <Link to="/register">
+            <MagneticButton variant="glow" size="sm">
+              <span>Get Started</span>
+              <ArrowRight className="w-3.5 h-3.5 ml-1.5 inline-block" />
+            </MagneticButton>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -107,12 +113,18 @@ export const Navbar: React.FC = () => {
               </a>
             ))}
             <div className="pt-4 border-t border-[#1F1F1F] space-y-3">
-              <button className="w-full text-center text-xs uppercase tracking-wider font-semibold text-neutral-300 py-2 border border-[#292929] rounded-lg">
+              <Link
+                to="/signin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block w-full text-center text-xs uppercase tracking-wider font-semibold text-neutral-300 py-2 border border-[#292929] rounded-lg"
+              >
                 Login
-              </button>
-              <MagneticButton variant="primary" size="md" className="w-full">
-                Get Started
-              </MagneticButton>
+              </Link>
+              <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="block w-full">
+                <MagneticButton variant="primary" size="md" className="w-full">
+                  Get Started
+                </MagneticButton>
+              </Link>
             </div>
           </motion.div>
         )}

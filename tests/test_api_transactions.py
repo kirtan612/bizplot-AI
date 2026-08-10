@@ -5,6 +5,7 @@ Tests against target PostgreSQL database.
 
 import os
 import sys
+# pyrefly: ignore [missing-import]
 import pytest
 from fastapi.testclient import TestClient
 

@@ -261,7 +261,7 @@ export interface LaserFlowProps {
   color?: string;
 }
 
-export const LaserFlow: React.FC<LaserFlowProps> = ({
+const LaserFlowComponent: React.FC<LaserFlowProps> = ({
   className,
   style,
   wispDensity = 1,
@@ -387,7 +387,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
 
     const clock = new THREE.Clock();
     let prevTime = 0;
-    let fade = hasFadedRef.current ? 1 : 0;
+    let fade = 1;
 
     const mouseTarget = new THREE.Vector2(0, 0);
     const mouseSmooth = new THREE.Vector2(0, 0);
@@ -526,10 +526,8 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       uniforms.uFogTime.value += cdt;
 
       if (!hasFadedRef.current) {
-        const fadeDur = 1.0;
-        fade = Math.min(1, fade + cdt / fadeDur);
-        uniforms.uFade.value = fade;
-        if (fade >= 1) hasFadedRef.current = true;
+        uniforms.uFade.value = 1.0;
+        hasFadedRef.current = true;
       }
 
       const tau = Math.max(1e-3, mouseSmoothTime);
@@ -609,4 +607,5 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
   return <div ref={mountRef} className={`laser-flow-container ${className || ''}`} style={style} />;
 };
 
+export const LaserFlow = React.memo(LaserFlowComponent);
 export default LaserFlow;
