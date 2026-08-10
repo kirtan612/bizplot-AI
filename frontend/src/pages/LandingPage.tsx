@@ -3,7 +3,6 @@ import { Navbar } from '../sections/landing/Navbar';
 import { Hero } from '../sections/landing/Hero';
 import { DataUniverse } from '../sections/landing/DataUniverse';
 import { AIExecutiveTeam } from '../sections/landing/AIExecutiveTeam';
-import { BusinessOverview } from '../sections/landing/BusinessOverview';
 import { CustomerIntelligence } from '../sections/landing/CustomerIntelligence';
 import { ProfitIntelligence } from '../sections/landing/ProfitIntelligence';
 import { CashflowIntelligence } from '../sections/landing/CashflowIntelligence';
@@ -25,7 +24,6 @@ export const LandingPage: React.FC = () => {
         <Hero />
         <DataUniverse />
         <AIExecutiveTeam />
-        <BusinessOverview />
         <CustomerIntelligence />
         <ProfitIntelligence />
         <CashflowIntelligence />

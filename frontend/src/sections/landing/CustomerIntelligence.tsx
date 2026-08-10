@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, AlertTriangle, ArrowRight, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { Users, AlertTriangle, ArrowRight, CheckCircle2, ShieldAlert, TrendingUp, TrendingDown, Clock, ShoppingBag } from 'lucide-react';
+import { BusinessChart } from '../../components/BusinessChart';
 import { fadeInUp } from '../../lib/animations';
 
 interface Customer {
@@ -9,12 +10,14 @@ interface Customer {
   location: string;
   status: 'At Risk' | 'Healthy' | 'Declining' | 'Growing';
   clv: string;
+  aov: string;
   orderFreq: string;
   lastOrder: string;
   purchaseGap: string;
   retentionProb: number;
   insight: string;
   recommendation: string;
+  historyData: { label: string; value: number }[];
 }
 
 const CUSTOMERS: Customer[] = [
@@ -24,12 +27,20 @@ const CUSTOMERS: Customer[] = [
     location: 'Surat, Gujarat',
     status: 'At Risk',
     clv: '₹1.84 Cr',
+    aov: '₹8.4 Lakh',
     orderFreq: 'Every 14 days',
     lastOrder: '42 days ago',
     purchaseGap: '+28 days overdue',
     retentionProb: 34,
     insight: "ABC Industries' purchase frequency has declined for three consecutive cycles. Order gap expanded from 14 to 42 days.",
     recommendation: 'Review pricing on high-volume GI pipes (80mm) before their upcoming procurement window.',
+    historyData: [
+      { label: 'Jan', value: 14 },
+      { label: 'Feb', value: 18 },
+      { label: 'Mar', value: 24 },
+      { label: 'Apr', value: 32 },
+      { label: 'May', value: 42 },
+    ],
   },
   {
     id: 'shree',
@@ -37,12 +48,20 @@ const CUSTOMERS: Customer[] = [
     location: 'Ahmedabad, Gujarat',
     status: 'Healthy',
     clv: '₹94.2 L',
+    aov: '₹5.2 Lakh',
     orderFreq: 'Every 21 days',
     lastOrder: '6 days ago',
     purchaseGap: 'On schedule',
     retentionProb: 94,
     insight: 'Shree Engineering purchase pattern remains exceptionally stable with steady 15 MT monthly reorders.',
     recommendation: 'Propose annual bulk supply contract with 2.5% rebate structure.',
+    historyData: [
+      { label: 'Jan', value: 20 },
+      { label: 'Feb', value: 21 },
+      { label: 'Mar', value: 20 },
+      { label: 'Apr', value: 22 },
+      { label: 'May', value: 21 },
+    ],
   },
   {
     id: 'metro',
@@ -50,12 +69,20 @@ const CUSTOMERS: Customer[] = [
     location: 'Vadodara, Gujarat',
     status: 'Declining',
     clv: '₹68.5 L',
+    aov: '₹4.8 Lakh',
     orderFreq: 'Every 30 days',
     lastOrder: '38 days ago',
     purchaseGap: '+8 days gap',
     retentionProb: 58,
     insight: 'Metro Components reduced order volume by 35% in the last order cycle, shifting partial purchases to competitor.',
     recommendation: 'Offer flexible 45-day payment terms on next MS Pipe shipment.',
+    historyData: [
+      { label: 'Jan', value: 28 },
+      { label: 'Feb', value: 30 },
+      { label: 'Mar', value: 32 },
+      { label: 'Apr', value: 35 },
+      { label: 'May', value: 38 },
+    ],
   },
   {
     id: 'patel',
@@ -63,12 +90,20 @@ const CUSTOMERS: Customer[] = [
     location: 'Rajkot, Gujarat',
     status: 'Growing',
     clv: '₹2.12 Cr',
+    aov: '₹12.6 Lakh',
     orderFreq: 'Every 10 days',
     lastOrder: '2 days ago',
     purchaseGap: 'Accelerating',
     retentionProb: 98,
     insight: 'Order frequency increased by 40% due to new infrastructure sub-contracts in Saurashtra region.',
     recommendation: 'Reserve 60 MT GP Pipe inventory in Rajkot warehouse.',
+    historyData: [
+      { label: 'Jan', value: 16 },
+      { label: 'Feb', value: 14 },
+      { label: 'Mar', value: 12 },
+      { label: 'Apr', value: 10 },
+      { label: 'May', value: 8 },
+    ],
   },
 ];
 
@@ -89,9 +124,9 @@ export const CustomerIntelligence: React.FC = () => {
             CUSTOMER RETENTION INTELLIGENCE
           </span>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-            KNOW YOUR CUSTOMERS.
+            KNOW WHICH CUSTOMERS.
             <br />
-            <span className="text-gradient">BEFORE THEY LEAVE.</span>
+            <span className="text-gradient">ARE MOVING BEFORE THEY LEAVE.</span>
           </h2>
           <p className="text-sm sm:text-base text-neutral-400">
             BizPilot tracks order frequencies, purchasing gaps, and line-item mix shifts to detect customer churn signals weeks before revenue impact.
@@ -104,7 +139,7 @@ export const CustomerIntelligence: React.FC = () => {
           <div className="lg:col-span-7 rounded-2xl bg-[#0A0A0A] border border-[#1F1F1F] p-5 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-[#1A1A1A]">
               <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4 text-white" />
+                <Users className="w-4 h-4 text-cyan-400" />
                 <span className="text-xs font-bold text-white uppercase font-mono">ACCOUNT TELEMETRY LIST</span>
               </div>
               <span className="text-[10px] font-mono text-neutral-500">4 ACCOUNTS MONITORED</span>
@@ -119,7 +154,7 @@ export const CustomerIntelligence: React.FC = () => {
                     onClick={() => setSelectedCust(cust)}
                     className={`p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
                       isSelected
-                        ? 'bg-[#181818] border-white/40 shadow-lg'
+                        ? 'bg-[#181818] border-cyan-400/50 shadow-[0_0_20px_rgba(6,182,212,0.15)]'
                         : 'bg-[#0E0E0E] border-[#1A1A1A] hover:border-[#2A2A2A]'
                     }`}
                   >
@@ -131,20 +166,26 @@ export const CustomerIntelligence: React.FC = () => {
                       <span
                         className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border ${
                           cust.status === 'At Risk'
-                            ? 'bg-rose-950/60 text-rose-400 border-rose-800/40'
+                            ? 'bg-rose-950/60 text-rose-400 border-rose-800/40 font-bold'
                             : cust.status === 'Declining'
-                            ? 'bg-amber-950/60 text-amber-400 border-amber-800/40'
-                            : 'bg-emerald-950/60 text-emerald-400 border-emerald-800/40'
+                            ? 'bg-amber-950/60 text-amber-400 border-amber-800/40 font-bold'
+                            : cust.status === 'Growing'
+                            ? 'bg-cyan-950/60 text-cyan-400 border-cyan-800/40 font-bold'
+                            : 'bg-emerald-950/60 text-emerald-400 border-emerald-800/40 font-bold'
                         }`}
                       >
                         {cust.status.toUpperCase()}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#1C1C1C] text-xs font-mono">
+                    <div className="grid grid-cols-4 gap-2 pt-2 border-t border-[#1C1C1C] text-xs font-mono">
                       <div>
                         <span className="text-[10px] text-neutral-500 block">CLV</span>
                         <span className="text-white font-bold">{cust.clv}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-neutral-500 block">AVG ORDER</span>
+                        <span className="text-white font-bold">{cust.aov}</span>
                       </div>
                       <div>
                         <span className="text-[10px] text-neutral-500 block">PURCHASE GAP</span>
@@ -154,7 +195,7 @@ export const CustomerIntelligence: React.FC = () => {
                       </div>
                       <div>
                         <span className="text-[10px] text-neutral-500 block">RETENTION</span>
-                        <span className="text-white font-bold">{cust.retentionProb}%</span>
+                        <span className="text-cyan-400 font-bold">{cust.retentionProb}%</span>
                       </div>
                     </div>
                   </div>
@@ -176,15 +217,27 @@ export const CustomerIntelligence: React.FC = () => {
               >
                 <div className="flex items-center justify-between pb-4 border-b border-[#1E1E1E]">
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 block font-semibold">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 block font-semibold">
                       AI BEHAVIORAL INVESTIGATION
                     </span>
                     <h3 className="text-xl font-bold text-white">{selectedCust.name}</h3>
                   </div>
                   <div className="p-2.5 rounded-xl bg-[#1A1A1A] border border-[#333333] text-white">
-                    <ShieldAlert className="w-5 h-5" />
+                    <ShieldAlert className="w-5 h-5 text-amber-400" />
                   </div>
                 </div>
+
+                {/* Purchase Gap Trend Chart */}
+                <BusinessChart
+                  title="Order Gap Acceleration (Days Between Orders)"
+                  subtitle="Increasing gap signals severe customer churn risk"
+                  data={selectedCust.historyData}
+                  type="line"
+                  colorTheme={selectedCust.status === 'At Risk' ? 'rose' : selectedCust.status === 'Declining' ? 'amber' : 'emerald'}
+                  height={150}
+                  suffix=" Days"
+                  prefix=""
+                />
 
                 {/* Behavioral Metrics Grid */}
                 <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-[#060606] border border-[#1A1A1A] text-xs font-mono">
@@ -193,8 +246,8 @@ export const CustomerIntelligence: React.FC = () => {
                     <span className="text-white font-bold">{selectedCust.orderFreq}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-neutral-500 block">LAST ORDER</span>
-                    <span className="text-white font-bold">{selectedCust.lastOrder}</span>
+                    <span className="text-[10px] text-neutral-500 block">RETENTION PROBABILITY</span>
+                    <span className="text-cyan-400 font-bold">{selectedCust.retentionProb}%</span>
                   </div>
                 </div>
 
@@ -231,3 +284,4 @@ export const CustomerIntelligence: React.FC = () => {
     </section>
   );
 };
+

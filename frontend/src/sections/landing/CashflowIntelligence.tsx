@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Wallet, ArrowDownRight, ArrowUpRight, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Wallet, ArrowDownRight, ArrowUpRight, ShieldCheck, RefreshCw, Sparkles } from 'lucide-react';
+import { InteractiveCashflowDiagram } from '../../components/InteractiveCashflowDiagram';
+import { AnimatedNumber } from '../../components/AnimatedNumber';
 import { fadeInUp } from '../../lib/animations';
 
 export const CashflowIntelligence: React.FC = () => {
@@ -14,7 +16,7 @@ export const CashflowIntelligence: React.FC = () => {
           variants={fadeInUp}
           className="text-center max-w-3xl mx-auto space-y-4"
         >
-          <span className="text-xs font-mono uppercase tracking-widest text-neutral-400 font-semibold">
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-400 font-semibold">
             WORKING CAPITAL TELEMETRY
           </span>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
@@ -27,97 +29,37 @@ export const CashflowIntelligence: React.FC = () => {
           </p>
         </motion.div>
 
-        {/* Money Flow Diagram + Cash Telemetry Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Money Flow Path Box */}
-          <div className="lg:col-span-6 p-8 rounded-2xl bg-[#0B0B0B] border border-[#202020] space-y-6 shadow-2xl relative">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-semibold">
-                MONEY MOVEMENT PIPELINE (NEXT 30 DAYS)
-              </span>
-              <span className="text-xs font-mono text-emerald-400 flex items-center space-x-1">
-                <RefreshCw className="w-3 h-3 animate-spin" />
-                <span>LIVE SYNC</span>
-              </span>
-            </div>
+        {/* Money Movement Interactive Pipeline */}
+        <InteractiveCashflowDiagram />
 
-            {/* Inflows Block */}
-            <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-900/40 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-emerald-950 border border-emerald-800 text-emerald-400">
-                  <ArrowDownRight className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-xs text-neutral-400 block font-mono">EXPECTED INFLOWS</span>
-                  <span className="text-sm font-bold text-white">Customer Collections</span>
-                </div>
-              </div>
-              <span className="text-xl font-bold font-mono text-emerald-400">+₹72.0 Lakh</span>
+        {/* Forecast Summary & Recommendation Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="p-6 rounded-2xl bg-[#0C0C0C] border border-[#242424] space-y-3">
+            <span className="text-[10px] text-neutral-400 font-mono block uppercase">CURRENT TREASURY CASH</span>
+            <div className="text-3xl font-extrabold font-mono text-white tracking-tight">
+              <AnimatedNumber value={1.86} prefix="₹" suffix=" Cr" decimals={2} />
             </div>
-
-            {/* Center Cash Buffer Box */}
-            <div className="p-6 rounded-2xl bg-[#141414] border border-[#2D2D2D] text-center space-y-2 shadow-inner">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 block">
-                CURRENT TREASURY CASH POSITION
-              </span>
-              <span className="text-4xl font-extrabold font-mono text-white tracking-tight">₹1.86 Cr</span>
-              <span className="text-xs text-neutral-500 block">HDFC Bank + ICICI Business Accounts</span>
-            </div>
-
-            {/* Outflows Block */}
-            <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-900/40 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-rose-950 border border-rose-800 text-rose-400">
-                  <ArrowUpRight className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-xs text-neutral-400 block font-mono">EXPECTED OUTFLOWS</span>
-                  <span className="text-sm font-bold text-white">Suppliers + OpEx + Loans</span>
-                </div>
-              </div>
-              <span className="text-xl font-bold font-mono text-rose-400">-₹91.0 Lakh</span>
-            </div>
+            <p className="text-xs text-neutral-400 font-mono">HDFC Current + ICICI Escrow Accounts</p>
           </div>
 
-          {/* Forecast Summary & Recommendation */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="p-6 rounded-2xl bg-[#0C0C0C] border border-[#242424] space-y-6 shadow-2xl">
-              <div className="flex items-center justify-between pb-3 border-b border-[#1E1E1E]">
-                <h3 className="text-base font-bold text-white font-mono uppercase tracking-wide">
-                  PROJECTED CASHGAP & BUFFER
-                </h3>
-                <span className="text-xs font-mono text-neutral-400">CYCLE: 30 DAYS</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-[#141414] border border-[#222222]">
-                  <span className="text-[10px] text-neutral-500 font-mono block uppercase">NET RECURRING DEFICIT</span>
-                  <span className="text-2xl font-bold font-mono text-amber-400 mt-1 block">₹19.0 Lakh</span>
-                  <span className="text-[11px] text-neutral-400 block mt-1">Outflows exceed Inflows</span>
-                </div>
-                <div className="p-4 rounded-xl bg-[#141414] border border-[#222222]">
-                  <span className="text-[10px] text-neutral-500 font-mono block uppercase font-semibold">RECOMMENDED BUFFER</span>
-                  <span className="text-2xl font-bold font-mono text-emerald-400 mt-1 block">₹25.0 Lakh</span>
-                  <span className="text-[11px] text-neutral-400 block mt-1">Working Capital Reserve</span>
-                </div>
-              </div>
-
-              {/* AI Recommendation */}
-              <div className="p-5 rounded-xl bg-[#050505] border border-[#202020] space-y-3">
-                <div className="flex items-center space-x-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-300 font-semibold">
-                    CFO CASHFLOW DIRECTIVE
-                  </span>
-                </div>
-                <p className="text-xs text-neutral-200 leading-relaxed font-medium">
-                  "Maintain approximately <strong className="text-white font-mono">₹25 Lakh</strong> working-capital buffer by drawing down early payments on Patel Industrial ledgers before August 25."
-                </p>
-              </div>
+          <div className="p-6 rounded-2xl bg-[#0C0C0C] border border-[#242424] space-y-3">
+            <span className="text-[10px] text-amber-400 font-mono block uppercase font-bold">PROJECTED CASHGAP (30 DAYS)</span>
+            <div className="text-3xl font-extrabold font-mono text-amber-400 tracking-tight">
+              <AnimatedNumber value={19.0} prefix="₹" suffix=" Lakh" decimals={1} />
             </div>
+            <p className="text-xs text-neutral-400 font-mono">Expected Outflows (-₹91 L) exceed Inflows (+₹72 L)</p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-[#0C0C0C] border border-[#242424] space-y-3">
+            <span className="text-[10px] text-emerald-400 font-mono block uppercase font-bold">RECOMMENDED LIQUIDITY BUFFER</span>
+            <div className="text-3xl font-extrabold font-mono text-emerald-400 tracking-tight">
+              <AnimatedNumber value={25.0} prefix="₹" suffix=" Lakh" decimals={1} />
+            </div>
+            <p className="text-xs text-neutral-400 font-mono">Reserve required before August 25 procurement</p>
           </div>
         </div>
       </div>
     </section>
   );
 };
+

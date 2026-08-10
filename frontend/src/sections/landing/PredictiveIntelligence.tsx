@@ -2,15 +2,17 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingDown, Sparkles, ShieldAlert, ArrowRight } from 'lucide-react';
 import { BusinessChart } from '../../components/BusinessChart';
+import { AnimatedNumber } from '../../components/AnimatedNumber';
 import { fadeInUp } from '../../lib/animations';
 
 export const PredictiveIntelligence: React.FC = () => {
   const forecastData = [
-    { label: 'Month 1 (Actual)', value: 3.42 },
-    { label: 'Month 2 (Forecast)', value: 3.31 },
-    { label: 'Month 3 (Forecast)', value: 3.20 },
-    { label: 'Month 4 (Forecast)', value: 3.12 },
-    { label: 'Month 5 (Forecast)', value: 3.08 },
+    { label: 'Jun (Actual)', value: 3.42, change: 5.8, isForecast: false },
+    { label: 'Jul (Actual)', value: 3.38, change: -1.1, isForecast: false },
+    { label: 'Aug (Forecast)', value: 3.31, change: -2.0, isForecast: true },
+    { label: 'Sep (Forecast)', value: 3.20, change: -3.3, isForecast: true },
+    { label: 'Oct (Forecast)', value: 3.12, change: -2.5, isForecast: true },
+    { label: 'Nov (Forecast)', value: 3.08, change: -1.2, isForecast: true },
   ];
 
   return (
@@ -23,7 +25,7 @@ export const PredictiveIntelligence: React.FC = () => {
           variants={fadeInUp}
           className="text-center max-w-3xl mx-auto space-y-4"
         >
-          <span className="text-xs font-mono uppercase tracking-widest text-neutral-400 font-semibold">
+          <span className="text-xs font-mono uppercase tracking-widest text-indigo-400 font-semibold">
             PREDICTIVE FORWARD MODELING
           </span>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
@@ -42,10 +44,13 @@ export const PredictiveIntelligence: React.FC = () => {
           <div className="lg:col-span-7">
             <BusinessChart
               title="120-Day Forward Profit Trajectory Forecast"
-              subtitle="Current ₹3.42 Cr → Projected ₹3.08 Cr (Variance modeling)"
+              subtitle="Solid line = Historical | Dashed line = AI Forward Prediction (Dashed Indigo)"
               data={forecastData}
-              type="area"
+              type="forecast"
+              colorTheme="forecast"
               height={260}
+              prefix="₹"
+              suffix=" Cr"
             />
           </div>
 
@@ -53,22 +58,26 @@ export const PredictiveIntelligence: React.FC = () => {
           <div className="lg:col-span-5 p-6 rounded-2xl bg-[#0D0D0D] border border-[#242424] space-y-6 shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-[#1E1E1E]">
               <div className="flex items-center space-x-2">
-                <ShieldAlert className="w-4 h-4 text-amber-400" />
+                <ShieldAlert className="w-4 h-4 text-indigo-400" />
                 <span className="text-xs font-bold text-white font-mono uppercase">PREDICTED RISK PANEL</span>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-800/40">
-                PROFIT PRESSURE 9.9%
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950/60 text-indigo-400 border border-indigo-800/40 font-bold">
+                PROFIT PRESSURE -9.9%
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-[#070707] border border-[#1C1C1C] font-mono">
               <div>
                 <span className="text-[10px] text-neutral-500 block uppercase">CURRENT PROFIT</span>
-                <span className="text-lg font-bold text-white">₹3.42 Cr</span>
+                <span className="text-lg font-bold text-white">
+                  <AnimatedNumber value={3.42} prefix="₹" suffix=" Cr" decimals={2} />
+                </span>
               </div>
               <div>
-                <span className="text-[10px] text-neutral-500 block uppercase">PROJECTED (M5)</span>
-                <span className="text-lg font-bold text-rose-400">₹3.08 Cr</span>
+                <span className="text-[10px] text-neutral-500 block uppercase">PROJECTED (NOV)</span>
+                <span className="text-lg font-bold text-rose-400">
+                  <AnimatedNumber value={3.08} prefix="₹" suffix=" Cr" decimals={2} />
+                </span>
               </div>
             </div>
 
@@ -86,7 +95,7 @@ export const PredictiveIntelligence: React.FC = () => {
                   <span>Distributor order margins compressing ↓</span>
                 </li>
                 <li className="flex items-center space-x-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
                   <span>Customer mix shifting to lower-tier SKUs</span>
                 </li>
               </ul>
@@ -111,3 +120,4 @@ export const PredictiveIntelligence: React.FC = () => {
     </section>
   );
 };
+

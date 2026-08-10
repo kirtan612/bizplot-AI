@@ -166,6 +166,7 @@ export const Hero: React.FC = () => {
                     subtitle="Actual vs AI Projections (Values in ₹ Crore)"
                     data={chartData}
                     type="area"
+                    colorTheme="purple"
                     height={220}
                   />
                 </div>

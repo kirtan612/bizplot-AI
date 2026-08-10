@@ -14,7 +14,7 @@ export const AIBusinessAnalyst: React.FC = () => {
           variants={fadeInUp}
           className="text-center max-w-3xl mx-auto space-y-4"
         >
-          <span className="text-xs font-mono uppercase tracking-widest text-neutral-400 font-semibold">
+          <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-semibold">
             NATURAL LANGUAGE QUERY ENGINE
           </span>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
@@ -47,7 +47,7 @@ I found three primary drivers:
               impactBars={[
                 { label: 'Raw Material Sheet Cost Increase', percentage: 55, color: 'bg-rose-500' },
                 { label: 'Excess Commercial Discounting', percentage: 22, color: 'bg-amber-400' },
-                { label: 'Low-Margin Order Mix', percentage: 15, color: 'bg-neutral-400' },
+                { label: 'Low-Margin Order Mix', percentage: 15, color: 'bg-cyan-400' },
               ]}
               recommendedAction="Review high-volume low-margin orders for Metro Components and adjust MOQ thresholds."
             />
@@ -57,3 +57,4 @@ I found three primary drivers:
     </section>
   );
 };
+

@@ -8,19 +8,19 @@ import { fadeInUp } from '../../lib/animations';
 
 export const BusinessOverview: React.FC = () => {
   const revenueTrend = [
-    { label: 'Q1 25', value: 18.4 },
-    { label: 'Q2 25', value: 20.1 },
-    { label: 'Q3 25', value: 21.8 },
-    { label: 'Q4 25', value: 23.2 },
-    { label: 'Q1 26', value: 24.8 },
+    { label: 'Q1 25', value: 18.4, change: 4.2 },
+    { label: 'Q2 25', value: 20.1, change: 9.2 },
+    { label: 'Q3 25', value: 21.8, change: 8.5 },
+    { label: 'Q4 25', value: 23.2, change: 6.4 },
+    { label: 'Q1 26', value: 24.8, change: 8.4 },
   ];
 
   const profitTrend = [
-    { label: 'Q1 25', value: 2.85 },
-    { label: 'Q2 25', value: 3.10 },
-    { label: 'Q3 25', value: 3.25 },
-    { label: 'Q4 25', value: 3.38 },
-    { label: 'Q1 26', value: 3.42 },
+    { label: 'Q1 25', value: 2.85, change: 3.1 },
+    { label: 'Q2 25', value: 3.10, change: 8.7 },
+    { label: 'Q3 25', value: 3.25, change: 4.8 },
+    { label: 'Q4 25', value: 3.38, change: 4.0 },
+    { label: 'Q1 26', value: 3.42, change: 5.8 },
   ];
 
   const recentActivity = [
@@ -67,21 +67,23 @@ export const BusinessOverview: React.FC = () => {
               ]}
             />
 
-            {/* Charts Row */}
+            {/* Colourful Interactive Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <BusinessChart
                 title="Revenue Acceleration (₹ Cr)"
-                subtitle="Quarterly trajectory over 5 billing cycles"
+                subtitle="Quarterly trajectory over 5 billing cycles (Cyan Hydro Flow)"
                 data={revenueTrend}
                 type="area"
-                height={200}
+                colorTheme="cyan"
+                height={210}
               />
               <BusinessChart
                 title="Gross Profit Margin Development (₹ Cr)"
-                subtitle="Net gross margin before operational overheads"
+                subtitle="Net gross margin before operational overheads (Violet Prism)"
                 data={profitTrend}
                 type="bar"
-                height={200}
+                colorTheme="purple"
+                height={210}
               />
             </div>
 
@@ -91,17 +93,19 @@ export const BusinessOverview: React.FC = () => {
               <div className="lg:col-span-2 p-5 rounded-xl bg-[#0D0D0D] border border-[#202020] space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <Activity className="w-4 h-4 text-neutral-400" />
+                    <Activity className="w-4 h-4 text-cyan-400" />
                     <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
                       LIVE ENTERPRISE TRANSACTION FEED
                     </h4>
                   </div>
-                  <span className="text-[10px] font-mono text-neutral-500">AUTO SYNC ON</span>
+                  <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/40">
+                    AUTO SYNC ON
+                  </span>
                 </div>
 
                 <div className="divide-y divide-[#1A1A1A]">
                   {recentActivity.map((act, i) => (
-                    <div key={i} className="py-3 flex items-center justify-between text-xs">
+                    <div key={i} className="py-3 flex items-center justify-between text-xs hover:bg-[#141414] px-2 rounded transition-colors">
                       <div>
                         <span className="text-neutral-500 font-mono text-[10px] uppercase block">{act.type}</span>
                         <span className="text-white font-semibold">{act.title}</span>
@@ -119,8 +123,8 @@ export const BusinessOverview: React.FC = () => {
               <div className="p-5 rounded-xl bg-gradient-to-b from-[#141414] to-[#0A0A0A] border border-[#282828] flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2">
-                    <Sparkles className="w-4 h-4 text-white" />
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-300 font-semibold">
+                    <Sparkles className="w-4 h-4 text-purple-400" />
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-purple-300 font-semibold">
                       AI CORE SYNTHESIS
                     </span>
                   </div>
@@ -134,9 +138,9 @@ export const BusinessOverview: React.FC = () => {
 
                 <div className="mt-4 pt-3 border-t border-[#222222]">
                   <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest block mb-1">
-                    AI STRATEGY
+                    AI STRATEGY DIRECTIVE
                   </span>
-                  <span className="text-xs text-white font-semibold block">
+                  <span className="text-xs text-cyan-300 font-semibold block">
                     Adjust minimum order quantity (MOQ) pricing structure for Q3.
                   </span>
                 </div>
@@ -148,3 +152,4 @@ export const BusinessOverview: React.FC = () => {
     </section>
   );
 };
+

@@ -585,7 +585,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
     uniforms.uFalloffStart.value = falloffStart;
     uniforms.uFogFallSpeed.value = fogFallSpeed;
 
-    const { r, g, b } = hexToRGB(color || '#FFFFFF');
+    const { r, g, b } = hexToRGB(color || '#cd229dff');
     (uniforms.uColor.value as THREE.Vector3).set(r, g, b);
   }, [
     wispDensity,
