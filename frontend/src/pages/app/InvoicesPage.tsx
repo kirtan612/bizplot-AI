@@ -1,35 +1,78 @@
 import React from 'react';
-import { FileText } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 import { BusinessChart } from '../../components/BusinessChart';
+import { FileText, ShieldCheck } from 'lucide-react';
 
 export const InvoicesPage: React.FC = () => {
+  const { tokens: t } = useTheme();
+
   return (
-    <div className="space-y-8 text-white font-sans max-w-7xl mx-auto">
-      <div className="pb-6 border-b border-[#1E1E1E]">
-        <span className="px-2.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/40 text-[10px] font-mono font-bold uppercase">
-          INVOICES & BILLING (invoices.view)
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
-          GST Invoicing & Aging Collections
-        </h1>
-        <p className="text-xs text-neutral-400 font-mono mt-0.5">
-          E-Way bill generation, pending collections aging, and tax reconciliation.
-        </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%', fontFamily: "'Inter', sans-serif" }}>
+      {/* Header Banner */}
+      <div
+        style={{
+          background: t.card,
+          border: `1px solid ${t.border}`,
+          borderRadius: 28,
+          padding: 24,
+          display: 'flex',
+          justify: 'space-between',
+          alignItems: 'center',
+          gap: 20,
+        }}
+        className="flex-col sm:flex-row"
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: '50%', background: t.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <FileText size={16} color={t.accent} />
+            </div>
+            <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: t.accent, fontFamily: "'Inter', sans-serif" }}>
+              INVOICING TELEMETRY
+            </span>
+          </div>
+          <h1 style={{ margin: '6px 0 0', fontSize: 24, fontWeight: 800, color: t.text, fontFamily: "'Manrope', sans-serif", letterSpacing: -0.5 }}>
+            Invoices & Receivables Billing
+          </h1>
+          <p style={{ margin: '3px 0 0', fontSize: 13, color: t.textSub }}>
+            Billing velocity, overdue ledger collection, and GST reconciliation.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 999, background: t.accentSoft, border: `1px solid ${t.border}`, fontSize: 12.5, color: t.ok, fontWeight: 700, fontFamily: "'Manrope', sans-serif" }}>
+          <ShieldCheck size={16} color={t.ok} />
+          <span>GST Reconciled (100%)</span>
+        </div>
       </div>
 
-      <BusinessChart
-        title="Accounts Receivable Collections Aging (₹ Cr)"
-        data={[
-          { label: '0-15 Days', value: 4.82 },
-          { label: '16-30 Days', value: 2.45 },
-          { label: '31-60 Days', value: 1.12 },
-          { label: '60+ Days', value: 0.84 },
-        ]}
-        type="bar"
-        colorTheme="cyan"
-        prefix="₹"
-        suffix=" Cr"
-      />
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <BusinessChart
+          title="Monthly Billed Volume"
+          subtitle="Total billed value per month"
+          data={[
+            { label: 'Apr', value: 1.82 },
+            { label: 'May', value: 2.14 },
+            { label: 'Jun', value: 2.48 },
+            { label: 'Jul', value: 2.89 },
+          ]}
+          type="area"
+          prefix="₹"
+          suffix=" Cr"
+        />
+        <BusinessChart
+          title="Overdue Invoice Bucket Count"
+          subtitle="Number of invoices past due"
+          data={[
+            { label: '1-15d', value: 14 },
+            { label: '16-30d', value: 8 },
+            { label: '31-60d', value: 5 },
+            { label: '60d+', value: 2 },
+          ]}
+          type="bar"
+          suffix=" Inv"
+        />
+      </div>
     </div>
   );
 };

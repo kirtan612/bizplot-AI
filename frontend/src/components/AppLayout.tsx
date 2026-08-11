@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
-import { GlobalSearchModal } from './GlobalSearchModal';
+import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+import { GlobalSearchModal } from './layout/GlobalSearchModal';
 import { Sparkles, Settings, Sun, Moon, Bell, Search, ChevronDown, Check, User, LogOut } from 'lucide-react';
-import type { Permission } from '../../types/auth';
-import { MOCK_AI_ALERTS } from '../../mock/alertData';
+import type { Permission } from '../types/auth';
+import { MOCK_AI_ALERTS } from '../mock/alertData';
 
 interface NavItem {
   label: string;
@@ -495,7 +495,7 @@ export const AppLayout: React.FC = () => {
               color: t.textSub,
               display: 'flex',
               alignItems: 'center',
-              justify: 'center',
+              justifyContent: 'center',
               cursor: 'pointer',
               padding: 0,
               margin: 0,

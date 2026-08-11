@@ -54,20 +54,32 @@ const ALL_PERMISSIONS: Permission[] = [
   'company.settings',
   'ai.insights.view',
   'ai.insights.create',
+  'ai.executive_center.view',
+  'ai.executive_room.view',
+  'ai.ceo.view',
+  'ai.cfo.view',
+  'ai.coo.view',
+  'ai.cmo.view',
+  'ai.cto.view',
+  'ai.hr.view',
+  'ai.legal.view',
+  'ai.supply.view',
+  'ai.sales.view',
+  'ai.bi.view',
 ];
 
 const DEFAULT_ROLES: Role[] = [
   {
     id: 'role-owner',
     name: 'OWNER',
-    description: 'Full organization access and administrative control over billing, team, and security.',
+    description: 'Full organization access and administrative control over billing, team, security, and AI executive suite.',
     isSystemRole: true,
     permissions: ALL_PERMISSIONS,
   },
   {
     id: 'role-manager',
     name: 'MANAGER',
-    description: 'Management access for sales, operations, customer accounts, inventory, and analytics.',
+    description: 'Management access for sales, operations, customer accounts, inventory, and permitted AI executive modules.',
     isSystemRole: true,
     permissions: [
       'dashboard.view',
@@ -88,12 +100,18 @@ const DEFAULT_ROLES: Role[] = [
       'employees.view',
       'ai.insights.view',
       'ai.insights.create',
+      'ai.executive_center.view',
+      'ai.executive_room.view',
+      'ai.coo.view',
+      'ai.sales.view',
+      'ai.supply.view',
+      'ai.cmo.view',
     ],
   },
   {
     id: 'role-accountant',
     name: 'ACCOUNTANT',
-    description: 'Finance, ledgers, invoices, cashflow forecasting, tax reconciliation, and financial reports.',
+    description: 'Finance, ledgers, invoices, cashflow forecasting, tax reconciliation, AI CFO, and financial reports.',
     isSystemRole: true,
     permissions: [
       'dashboard.view',
@@ -109,6 +127,10 @@ const DEFAULT_ROLES: Role[] = [
       'cashflow.view',
       'reports.view',
       'reports.finance.view',
+      'ai.insights.view',
+      'ai.executive_center.view',
+      'ai.cfo.view',
+      'ai.bi.view',
     ],
   },
   {
@@ -122,6 +144,7 @@ const DEFAULT_ROLES: Role[] = [
       'sales.view',
       'inventory.view',
       'ai.insights.view',
+      'ai.executive_center.view',
     ],
   },
 ];

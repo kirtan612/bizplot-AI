@@ -1,44 +1,117 @@
 import React from 'react';
-import { Users, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
+import { Users, ShieldCheck, AlertTriangle } from 'lucide-react';
 
 export const CustomersPage: React.FC = () => {
+  const { tokens: t } = useTheme();
+
   return (
-    <div className="space-y-8 text-white font-sans max-w-7xl mx-auto">
-      <div className="pb-6 border-b border-[#1E1E1E]">
-        <span className="px-2.5 py-0.5 rounded bg-purple-950 text-purple-400 border border-purple-800/40 text-[10px] font-mono font-bold uppercase">
-          CUSTOMER INTELLIGENCE (customers.view)
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
-          Customer Accounts & Retention
-        </h1>
-        <p className="text-xs text-neutral-400 font-mono mt-0.5">
-          Order gap acceleration, churn probability, and distributor credit telemetry.
-        </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%', fontFamily: "'Inter', sans-serif" }}>
+      {/* Header Banner */}
+      <div
+        style={{
+          background: t.card,
+          border: `1px solid ${t.border}`,
+          borderRadius: 28,
+          padding: 24,
+          display: 'flex',
+          justify: 'space-between',
+          alignItems: 'center',
+          gap: 20,
+        }}
+        className="flex-col sm:flex-row"
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: '50%', background: t.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Users size={16} color={t.accent} />
+            </div>
+            <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: t.accent, fontFamily: "'Inter', sans-serif" }}>
+              CUSTOMER INTELLIGENCE
+            </span>
+          </div>
+          <h1 style={{ margin: '6px 0 0', fontSize: 24, fontWeight: 800, color: t.text, fontFamily: "'Manrope', sans-serif", letterSpacing: -0.5 }}>
+            Customer Accounts & Retention
+          </h1>
+          <p style={{ margin: '3px 0 0', fontSize: 13, color: t.textSub }}>
+            Order gap acceleration, churn probability, and distributor credit telemetry.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 999, background: t.accentSoft, border: `1px solid ${t.border}`, fontSize: 12.5, color: t.ok, fontWeight: 700, fontFamily: "'Manrope', sans-serif" }}>
+          <ShieldCheck size={16} color={t.ok} />
+          <span>342 Active Accounts</span>
+        </div>
       </div>
 
-      <div className="rounded-2xl bg-[#0A0A0A] border border-[#222222] p-6 space-y-4 font-mono text-xs shadow-xl">
-        <div className="flex justify-between font-bold text-neutral-400 border-b border-[#1C1C1C] pb-2 text-[11px]">
-          <span>CUSTOMER ACCOUNT</span>
-          <span>HEALTH STATUS</span>
-          <span>LAST ORDER GAP</span>
-          <span>CLV</span>
-          <span>ACTION RECOMMENDATION</span>
+      {/* Customer Health Table Card */}
+      <div
+        style={{
+          background: t.card,
+          border: `1px solid ${t.border}`,
+          borderRadius: 28,
+          padding: 22,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 10, borderBottom: `1px solid ${t.border}` }}>
+          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: t.text, fontFamily: "'Manrope', sans-serif" }}>
+            Account Health Telemetry
+          </h3>
+          <span style={{ fontSize: 11.5, color: t.textFaint }}>Sorted by Retention Priority</span>
         </div>
 
-        <div className="flex justify-between items-center text-neutral-300 py-2 border-b border-[#141414]">
-          <span className="font-bold text-white">ABC Industries Ltd. (Surat)</span>
-          <span className="px-2 py-0.5 rounded bg-rose-950 text-rose-400 border border-rose-800/40 font-bold">At Risk (88%)</span>
-          <span>42 Days (+28d gap)</span>
-          <span>₹1.84 Cr</span>
-          <span className="text-cyan-400 underline cursor-pointer">Dispatch Tier Discount Offer</span>
-        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs font-sans">
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${t.border}`, color: t.textFaint }}>
+                <th className="pb-3 font-semibold">CUSTOMER ACCOUNT</th>
+                <th className="pb-3 font-semibold">HEALTH STATUS</th>
+                <th className="pb-3 font-semibold">LAST ORDER GAP</th>
+                <th className="pb-3 font-semibold">CLV</th>
+                <th className="pb-3 font-semibold text-right">ACTION RECOMMENDATION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style={{ borderBottom: `1px solid ${t.border}` }}>
+                <td className="py-3.5">
+                  <span style={{ fontWeight: 700, color: t.text, fontFamily: "'Manrope', sans-serif", display: 'block' }}>ABC Industries Ltd. (Surat)</span>
+                  <span style={{ fontSize: 11, color: t.textFaint }}>Distributor • Tier A</span>
+                </td>
+                <td className="py-3.5">
+                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600, color: t.warn, background: t.accentSoft }}>
+                    At Risk (88%)
+                  </span>
+                </td>
+                <td className="py-3.5" style={{ color: t.textSub }}>42 Days (+28d gap)</td>
+                <td className="py-3.5 font-bold font-mono" style={{ color: t.text }}>₹1.84 Cr</td>
+                <td className="py-3.5 text-right">
+                  <button style={{ padding: '4px 12px', borderRadius: 999, background: t.dark, color: t.darkText, border: 'none', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', fontFamily: "'Inter', sans-serif" }}>
+                    Dispatch Tier Discount
+                  </button>
+                </td>
+              </tr>
 
-        <div className="flex justify-between items-center text-neutral-300 py-2 border-b border-[#141414]">
-          <span className="font-bold text-white">Shree Engineering (Ahmedabad)</span>
-          <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/40 font-bold">Healthy (96%)</span>
-          <span>6 Days Ago</span>
-          <span>₹94.2 L</span>
-          <span className="text-neutral-400">Standard Annual Renewal</span>
+              <tr style={{ borderBottom: `1px solid ${t.border}` }}>
+                <td className="py-3.5">
+                  <span style={{ fontWeight: 700, color: t.text, fontFamily: "'Manrope', sans-serif", display: 'block' }}>Shree Engineering (Ahmedabad)</span>
+                  <span style={{ fontSize: 11, color: t.textFaint }}>OEM Partner • Tier A+</span>
+                </td>
+                <td className="py-3.5">
+                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600, color: t.ok, background: t.accentSoft }}>
+                    Healthy (96%)
+                  </span>
+                </td>
+                <td className="py-3.5" style={{ color: t.textSub }}>6 Days Ago</td>
+                <td className="py-3.5 font-bold font-mono" style={{ color: t.text }}>₹94.2 L</td>
+                <td className="py-3.5 text-right">
+                  <span style={{ fontSize: 12, color: t.textSub }}>Standard Annual Renewal</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

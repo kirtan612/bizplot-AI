@@ -1,40 +1,76 @@
 import React from 'react';
-import { ShoppingBag } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
+import { BusinessChart } from '../../components/BusinessChart';
+import { Truck, ShieldCheck } from 'lucide-react';
 
 export const PurchasesPage: React.FC = () => {
+  const { tokens: t } = useTheme();
+
   return (
-    <div className="space-y-8 text-white font-sans max-w-7xl mx-auto">
-      <div className="pb-6 border-b border-[#1E1E1E]">
-        <span className="px-2.5 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800/40 text-[10px] font-mono font-bold uppercase">
-          PURCHASES & SUPPLIERS (purchases.view)
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
-          Supplier Procurement Telemetry
-        </h1>
-        <p className="text-xs text-neutral-400 font-mono mt-0.5">
-          Mill prices, raw material price surges, and supplier contract terms.
-        </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%', fontFamily: "'Inter', sans-serif" }}>
+      {/* Header Banner */}
+      <div
+        style={{
+          background: t.card,
+          border: `1px solid ${t.border}`,
+          borderRadius: 28,
+          padding: 24,
+          display: 'flex',
+          justify: 'space-between',
+          alignItems: 'center',
+          gap: 20,
+        }}
+        className="flex-col sm:flex-row"
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: '50%', background: t.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Truck size={16} color={t.accent} />
+            </div>
+            <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: t.accent, fontFamily: "'Inter', sans-serif" }}>
+              PROCUREMENT INTELLIGENCE
+            </span>
+          </div>
+          <h1 style={{ margin: '6px 0 0', fontSize: 24, fontWeight: 800, color: t.text, fontFamily: "'Manrope', sans-serif", letterSpacing: -0.5 }}>
+            Procurement & Supplier Intelligence
+          </h1>
+          <p style={{ margin: '3px 0 0', fontSize: 13, color: t.textSub }}>
+            Input price variance, supplier lead times, and raw material cost inflation tracking.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 999, background: t.accentSoft, border: `1px solid ${t.border}`, fontSize: 12.5, color: t.ok, fontWeight: 700, fontFamily: "'Manrope', sans-serif" }}>
+          <ShieldCheck size={16} color={t.ok} />
+          <span>12 Active Suppliers</span>
+        </div>
       </div>
 
-      <div className="p-6 rounded-xl bg-[#0D0D0D] border border-[#202020] space-y-4 font-mono text-xs shadow-xl">
-        <div className="flex justify-between font-bold text-neutral-400 border-b border-[#1C1C1C] pb-2 text-[11px]">
-          <span>SUPPLIER MILL</span>
-          <span>PRICE SURGE</span>
-          <span>CURRENT BASE RATE</span>
-          <span>STATUS</span>
-        </div>
-        <div className="flex justify-between items-center text-neutral-300 py-2 border-b border-[#141414]">
-          <span className="font-bold text-white">APL Apollo Mills</span>
-          <span className="text-rose-400 font-bold">+9.2%</span>
-          <span>₹64,200 / MT</span>
-          <span className="text-amber-400 font-bold">Review Contract</span>
-        </div>
-        <div className="flex justify-between items-center text-neutral-300 py-2 border-b border-[#141414]">
-          <span className="font-bold text-white">Hi-Tech Steel Tubes</span>
-          <span className="text-emerald-400 font-bold">-4.1%</span>
-          <span>₹61,500 / MT</span>
-          <span className="text-emerald-400 font-bold">Preferred Vendor</span>
-        </div>
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <BusinessChart
+          title="Raw Material Cost Index (Steel Coil ₹/MT)"
+          subtitle="Monthly input material cost tracking"
+          data={[
+            { label: 'Apr', value: 58200 },
+            { label: 'May', value: 60400 },
+            { label: 'Jun', value: 62100 },
+            { label: 'Jul', value: 65400 },
+          ]}
+          type="area"
+          prefix="₹"
+          suffix=""
+        />
+        <BusinessChart
+          title="Supplier Lead Time Variance"
+          subtitle="Delivery lead time in days"
+          data={[
+            { label: 'JSW Steel', value: 4.2 },
+            { label: 'Tata Steel', value: 3.1 },
+            { label: 'SAIL Hub', value: 6.5 },
+          ]}
+          type="bar"
+          suffix=" Days"
+        />
       </div>
     </div>
   );

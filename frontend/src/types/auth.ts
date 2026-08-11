@@ -39,7 +39,19 @@ export type Permission =
   | 'roles.update'
   | 'company.settings'
   | 'ai.insights.view'
-  | 'ai.insights.create';
+  | 'ai.insights.create'
+  | 'ai.executive_center.view'
+  | 'ai.executive_room.view'
+  | 'ai.ceo.view'
+  | 'ai.cfo.view'
+  | 'ai.coo.view'
+  | 'ai.cmo.view'
+  | 'ai.cto.view'
+  | 'ai.hr.view'
+  | 'ai.legal.view'
+  | 'ai.supply.view'
+  | 'ai.sales.view'
+  | 'ai.bi.view';
 
 export interface User {
   id: string;

@@ -1,41 +1,132 @@
-import React from 'react';
-import { PieChart, Download, FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import { useTheme } from '../../context/ThemeContext';
+import { RevenueProfitChart } from '../../components/charts/RevenueProfitChart';
+import { CashFlowChart } from '../../components/charts/CashFlowChart';
+import { ExpenseBreakdownChart } from '../../components/charts/ExpenseBreakdownChart';
+import { ReceivablesAgingChart } from '../../components/charts/ReceivablesAgingChart';
+import { BarChart3, Download } from 'lucide-react';
 
 export const ReportsPage: React.FC = () => {
+  const { tokens: t } = useTheme();
+  const [activeTab, setActiveTab] = useState<'Revenue' | 'Inventory' | 'Orders' | 'Sales'>('Revenue');
+
   return (
-    <div className="space-y-8 text-white font-sans max-w-7xl mx-auto">
-      <div className="pb-6 border-b border-[#1E1E1E]">
-        <span className="px-2.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/40 text-[10px] font-mono font-bold uppercase">
-          REPORTS HUB (reports.view)
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
-          Executive Reports & Audit Logs
-        </h1>
-        <p className="text-xs text-neutral-400 font-mono mt-0.5">
-          Download certified GST GSTR-1/3B audit summaries, P&L statements, and inventory valuation ledgers.
-        </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%', fontFamily: "'Inter', sans-serif" }}>
+      {/* Header Banner */}
+      <div
+        style={{
+          background: t.card,
+          border: `1px solid ${t.border}`,
+          borderRadius: 28,
+          padding: 24,
+          display: 'flex',
+          justify: 'space-between',
+          alignItems: 'center',
+          gap: 20,
+        }}
+        className="flex-col sm:flex-row"
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: '50%', background: t.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <BarChart3 size={16} color={t.accent} />
+            </div>
+            <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: t.accent, fontFamily: "'Inter', sans-serif" }}>
+              REPORTS HUB
+            </span>
+          </div>
+          <h1 style={{ margin: '6px 0 0', fontSize: 24, fontWeight: 800, color: t.text, fontFamily: "'Manrope', sans-serif", letterSpacing: -0.5 }}>
+            Reports & Business Telemetry
+          </h1>
+          <p style={{ margin: '3px 0 0', fontSize: 13, color: t.textSub }}>
+            Comprehensive multi-period reports, export capabilities, and analytics.
+          </p>
+        </div>
+
+        <button
+          style={{
+            padding: '10px 20px',
+            borderRadius: 999,
+            background: t.dark,
+            color: t.darkText,
+            border: 'none',
+            fontSize: 12.5,
+            fontWeight: 700,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            fontFamily: "'Manrope', sans-serif",
+          }}
+        >
+          <Download size={14} />
+          <span>Export CSV Report</span>
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-[#0A0A0A] border border-[#222222] space-y-4 font-mono">
-          <FileText className="w-8 h-8 text-cyan-400" />
-          <h3 className="text-base font-bold text-white">GST GSTR-3B Reconciliation</h3>
-          <p className="text-xs text-neutral-400">Monthly tax liability & ITC claim verification log.</p>
-          <button className="px-3 py-1.5 rounded-lg bg-[#141414] border border-[#262626] text-xs text-cyan-400 font-bold flex items-center space-x-1.5 cursor-pointer">
-            <Download className="w-3.5 h-3.5" />
-            <span>Export PDF</span>
-          </button>
-        </div>
+      {/* Pill Tabs Selector */}
+      <div
+        style={{
+          background: t.card,
+          border: `1px solid ${t.border}`,
+          borderRadius: 999,
+          padding: 5,
+          display: 'flex',
+          gap: 4,
+          width: 'fit-content',
+        }}
+      >
+        {(['Revenue', 'Inventory', 'Orders', 'Sales'] as const).map((tab) => {
+          const active = activeTab === tab;
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: '8px 20px',
+                borderRadius: 999,
+                fontSize: 12.5,
+                fontWeight: 600,
+                fontFamily: "'Inter', sans-serif",
+                cursor: 'pointer',
+                border: 'none',
+                background: active ? t.dark : 'transparent',
+                color: active ? t.darkText : t.textSub,
+                transition: 'background 0.15s, color 0.15s',
+              }}
+            >
+              {tab}
+            </button>
+          );
+        })}
+      </div>
 
-        <div className="p-6 rounded-2xl bg-[#0A0A0A] border border-[#222222] space-y-4 font-mono">
-          <PieChart className="w-8 h-8 text-purple-400" />
-          <h3 className="text-base font-bold text-white">Executive Profit & Loss Statement</h3>
-          <p className="text-xs text-neutral-400">Quarterly SKU level margin contribution report.</p>
-          <button className="px-3 py-1.5 rounded-lg bg-[#141414] border border-[#262626] text-xs text-purple-400 font-bold flex items-center space-x-1.5 cursor-pointer">
-            <Download className="w-3.5 h-3.5" />
-            <span>Export Excel</span>
-          </button>
-        </div>
+      {/* Dynamic Report View */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {activeTab === 'Revenue' && (
+          <>
+            <RevenueProfitChart />
+            <CashFlowChart />
+          </>
+        )}
+        {activeTab === 'Inventory' && (
+          <>
+            <ExpenseBreakdownChart />
+            <ReceivablesAgingChart />
+          </>
+        )}
+        {activeTab === 'Orders' && (
+          <>
+            <CashFlowChart />
+            <RevenueProfitChart />
+          </>
+        )}
+        {activeTab === 'Sales' && (
+          <>
+            <RevenueProfitChart />
+            <ExpenseBreakdownChart />
+          </>
+        )}
       </div>
     </div>
   );

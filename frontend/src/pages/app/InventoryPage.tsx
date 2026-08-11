@@ -1,34 +1,78 @@
 import React from 'react';
-import { Box } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 import { BusinessChart } from '../../components/BusinessChart';
+import { Package, ShieldAlert } from 'lucide-react';
 
 export const InventoryPage: React.FC = () => {
+  const { tokens: t } = useTheme();
+
   return (
-    <div className="space-y-8 text-white font-sans max-w-7xl mx-auto">
-      <div className="pb-6 border-b border-[#1E1E1E]">
-        <span className="px-2.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/40 text-[10px] font-mono font-bold uppercase">
-          INVENTORY TELEMETRY (inventory.view)
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
-          Inventory SKUs & Stock Valuation
-        </h1>
-        <p className="text-xs text-neutral-400 font-mono mt-0.5">
-          Realtime warehouse tonnage, slow-moving SKUs, and dead capital analysis.
-        </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%', fontFamily: "'Inter', sans-serif" }}>
+      {/* Header Banner */}
+      <div
+        style={{
+          background: t.card,
+          border: `1px solid ${t.border}`,
+          borderRadius: 28,
+          padding: 24,
+          display: 'flex',
+          justify: 'space-between',
+          alignItems: 'center',
+          gap: 20,
+        }}
+        className="flex-col sm:flex-row"
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: '50%', background: t.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Package size={16} color={t.accent} />
+            </div>
+            <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: t.accent, fontFamily: "'Inter', sans-serif" }}>
+              INVENTORY CONTROL
+            </span>
+          </div>
+          <h1 style={{ margin: '6px 0 0', fontSize: 24, fontWeight: 800, color: t.text, fontFamily: "'Manrope', sans-serif", letterSpacing: -0.5 }}>
+            Inventory & SKU Health
+          </h1>
+          <p style={{ margin: '3px 0 0', fontSize: 13, color: t.textSub }}>
+            Stock turnover, idle capital detection, and reorder point automation.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 999, background: t.accentSoft, border: `1px solid ${t.border}`, fontSize: 12.5, color: t.warn, fontWeight: 700, fontFamily: "'Manrope', sans-serif" }}>
+          <ShieldAlert size={16} color={t.warn} />
+          <span>4 Low Stock Items</span>
+        </div>
       </div>
 
-      <BusinessChart
-        title="Current Yard Tonnage Stock Valuation (MT)"
-        data={[
-          { label: 'GI Pipes 2"', value: 420 },
-          { label: 'GI Pipes 4"', value: 310 },
-          { label: 'MS Tubes 1.5"', value: 280 },
-          { label: 'GP Sections 80x40', value: 190 },
-        ]}
-        type="bar"
-        colorTheme="emerald"
-        suffix=" MT"
-      />
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <BusinessChart
+          title="SKU Stock Value (₹ Lakh)"
+          subtitle="Valuation by primary SKU category"
+          data={[
+            { label: 'GI Pipes', value: 84.2 },
+            { label: 'MS Tubes', value: 42.1 },
+            { label: 'Seamless', value: 28.5 },
+            { label: 'Coils', value: 65.0 },
+          ]}
+          type="bar"
+          prefix="₹"
+          suffix=" L"
+        />
+        <BusinessChart
+          title="Stock Aging Curve"
+          subtitle="Inventory age distribution"
+          data={[
+            { label: '0-30 Days', value: 120 },
+            { label: '31-60 Days', value: 45 },
+            { label: '61-90 Days', value: 18 },
+            { label: '90+ Days', value: 8 },
+          ]}
+          type="area"
+          suffix=" SKUs"
+        />
+      </div>
     </div>
   );
 };
