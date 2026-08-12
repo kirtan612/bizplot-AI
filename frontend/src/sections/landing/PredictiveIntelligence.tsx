@@ -1,18 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingDown, Sparkles, ShieldAlert, ArrowRight } from 'lucide-react';
-import { BusinessChart } from '../../components/BusinessChart';
+import { ShieldAlert, ArrowRight } from 'lucide-react';
+import { LandingChart } from '../../components/LandingChart';
 import { AnimatedNumber } from '../../components/AnimatedNumber';
 import { fadeInUp } from '../../lib/animations';
 
 export const PredictiveIntelligence: React.FC = () => {
   const forecastData = [
-    { label: 'Jun (Actual)', value: 3.42, change: 5.8, isForecast: false },
-    { label: 'Jul (Actual)', value: 3.38, change: -1.1, isForecast: false },
-    { label: 'Aug (Forecast)', value: 3.31, change: -2.0, isForecast: true },
-    { label: 'Sep (Forecast)', value: 3.20, change: -3.3, isForecast: true },
-    { label: 'Oct (Forecast)', value: 3.12, change: -2.5, isForecast: true },
-    { label: 'Nov (Forecast)', value: 3.08, change: -1.2, isForecast: true },
+    { label: 'Jun (Actual)', value: 3.42, change: 5.8 },
+    { label: 'Jul (Actual)', value: 3.38, change: -1.1 },
+    { label: 'Aug (Forecast)', value: 3.31, change: -2.0 },
+    { label: 'Sep (Forecast)', value: 3.20, change: -3.3 },
+    { label: 'Oct (Forecast)', value: 3.12, change: -2.5 },
+    { label: 'Nov (Forecast)', value: 3.08, change: -1.2 },
   ];
 
   return (
@@ -42,15 +42,16 @@ export const PredictiveIntelligence: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Chart Forecast Canvas */}
           <div className="lg:col-span-7">
-            <BusinessChart
+            <LandingChart
               title="120-Day Forward Profit Trajectory Forecast"
-              subtitle="Solid line = Historical | Dashed line = AI Forward Prediction (Dashed Indigo)"
+              subtitle="Historical trends vs AI Forward Prediction"
               data={forecastData}
-              type="forecast"
-              colorTheme="forecast"
+              type="area"
+              colorTheme="purple"
               height={260}
               prefix="₹"
               suffix=" Cr"
+              isDark={true}
             />
           </div>
 
@@ -120,4 +121,3 @@ export const PredictiveIntelligence: React.FC = () => {
     </section>
   );
 };
-

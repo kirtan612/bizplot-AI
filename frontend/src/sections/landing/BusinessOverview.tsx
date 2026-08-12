@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Activity, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { Sparkles, Activity } from 'lucide-react';
 import { MetricGroup } from '../../components/MetricGroup';
-import { BusinessChart } from '../../components/BusinessChart';
+import { LandingChart } from '../../components/LandingChart';
 import { ProductWindow } from '../../components/ProductWindow';
 import { fadeInUp } from '../../lib/animations';
 
@@ -69,21 +69,23 @@ export const BusinessOverview: React.FC = () => {
 
             {/* Colourful Interactive Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <BusinessChart
+              <LandingChart
                 title="Revenue Acceleration (₹ Cr)"
                 subtitle="Quarterly trajectory over 5 billing cycles (Cyan Hydro Flow)"
                 data={revenueTrend}
                 type="area"
                 colorTheme="cyan"
                 height={210}
+                isDark={true}
               />
-              <BusinessChart
+              <LandingChart
                 title="Gross Profit Margin Development (₹ Cr)"
                 subtitle="Net gross margin before operational overheads (Violet Prism)"
                 data={profitTrend}
                 type="bar"
                 colorTheme="purple"
                 height={210}
+                isDark={true}
               />
             </div>
 
@@ -152,4 +154,3 @@ export const BusinessOverview: React.FC = () => {
     </section>
   );
 };
-

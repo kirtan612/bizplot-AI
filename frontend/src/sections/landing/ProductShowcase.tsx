@@ -21,12 +21,12 @@ import {
   Moon,
 } from 'lucide-react';
 import { MetricGroup } from '../../components/MetricGroup';
-import { BusinessChart } from '../../components/BusinessChart';
+import { LandingChart } from '../../components/LandingChart';
 import { fadeInUp } from '../../lib/animations';
 
 export const ProductShowcase: React.FC = () => {
   const [activeNav, setActiveNav] = useState('Overview');
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
 
   const isLight = theme === 'light';
 
@@ -199,9 +199,9 @@ export const ProductShowcase: React.FC = () => {
                         ]}
                       />
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <BusinessChart
-                          title="Revenue Acceleration Trajectory"
-                          subtitle="Cyan Hydro Flow"
+                        <LandingChart
+                          title="Revenue Trajectory (H1 FY26)"
+                          subtitle="Actual vs AI Projections (Values in ₹ Crore)"
                           data={[
                             { label: 'Jan', value: 18.2 },
                             { label: 'Feb', value: 19.8 },
@@ -211,10 +211,10 @@ export const ProductShowcase: React.FC = () => {
                             { label: 'Jun', value: 24.8 },
                           ]}
                           type="area"
-                          colorTheme="cyan"
-                          className={isLight ? 'bg-white border-slate-200 shadow-sm text-slate-900' : 'bg-[#0D0D0D] border-[#202020]'}
+                          colorTheme="purple"
+                          isDark={!isLight}
                         />
-                        <BusinessChart
+                        <LandingChart
                           title="Gross Margin Distribution"
                           subtitle="Purple Prism SKU Breakdown"
                           data={[
@@ -224,7 +224,7 @@ export const ProductShowcase: React.FC = () => {
                           ]}
                           type="bar"
                           colorTheme="purple"
-                          className={isLight ? 'bg-white border-slate-200 shadow-sm text-slate-900' : 'bg-[#0D0D0D] border-[#202020]'}
+                          isDark={!isLight}
                         />
                       </div>
                     </div>
@@ -257,8 +257,9 @@ export const ProductShowcase: React.FC = () => {
 
                   {activeNav === 'Profit' && (
                     <div className="space-y-6">
-                      <BusinessChart
+                      <LandingChart
                         title="Quarterly Profit Contribution Breakdown"
+                        subtitle="Category contribution in ₹ Lakh"
                         data={[
                           { label: 'Raw Material', value: 18.4 },
                           { label: 'Discounts', value: 7.2 },
@@ -270,15 +271,16 @@ export const ProductShowcase: React.FC = () => {
                         height={200}
                         prefix="₹"
                         suffix=" L"
-                        className={isLight ? 'bg-white border-slate-200 shadow-sm text-slate-900' : 'bg-[#0D0D0D] border-[#202020]'}
+                        isDark={!isLight}
                       />
                     </div>
                   )}
 
                   {activeNav === 'Cashflow' && (
                     <div className="space-y-6">
-                      <BusinessChart
+                      <LandingChart
                         title="Treasury Liquidity & Buffer Projection"
+                        subtitle="4-week cash runway projection"
                         data={[
                           { label: 'Week 1', value: 1.86 },
                           { label: 'Week 2', value: 1.72 },
@@ -288,7 +290,7 @@ export const ProductShowcase: React.FC = () => {
                         type="line"
                         colorTheme="emerald"
                         height={200}
-                        className={isLight ? 'bg-white border-slate-200 shadow-sm text-slate-900' : 'bg-[#0D0D0D] border-[#202020]'}
+                        isDark={!isLight}
                       />
                     </div>
                   )}

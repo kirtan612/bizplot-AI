@@ -22,18 +22,26 @@ export const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: 'Product', href: '#product-showcase' },
-    { name: 'Solutions', href: '#business-overview' },
     { name: 'AI Executives', href: '#ai-executives' },
     { name: 'Intelligence', href: '#customer-intelligence' },
     { name: 'How It Works', href: '#company-knowledge' },
   ];
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    const targetEl = document.querySelector(href);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass-nav ${
         isScrolled
-          ? 'glass-nav py-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.8)] border-b border-[#1E1E1E]'
-          : 'bg-transparent py-6'
+          ? 'py-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.95)] border-b border-[#241E34]'
+          : 'py-5 border-b border-white/10'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 flex items-center justify-between">
@@ -61,7 +69,8 @@ export const Navbar: React.FC = () => {
             <a
               key={link.name}
               href={link.href}
-              className="text-xs uppercase tracking-wider font-semibold text-neutral-400 hover:text-white transition-colors"
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="text-xs uppercase tracking-wider font-semibold text-neutral-300 hover:text-white transition-colors cursor-pointer"
             >
               {link.name}
             </a>
@@ -106,8 +115,8 @@ export const Navbar: React.FC = () => {
               <a
                 key={link.name}
                 href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block text-sm uppercase tracking-wider font-semibold text-neutral-300 hover:text-white py-2"
+                onClick={(e) => handleNavClick(e, link.href)}
+                className="block text-sm uppercase tracking-wider font-semibold text-neutral-300 hover:text-white py-2 cursor-pointer"
               >
                 {link.name}
               </a>

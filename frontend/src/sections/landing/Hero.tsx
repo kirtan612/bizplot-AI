@@ -4,7 +4,7 @@ import { ArrowRight, Sparkles, AlertTriangle } from 'lucide-react';
 import { MagneticButton } from '../../components/MagneticButton';
 import { ProductWindow } from '../../components/ProductWindow';
 import { MetricGroup } from '../../components/MetricGroup';
-import { BusinessChart } from '../../components/BusinessChart';
+import { LandingChart } from '../../components/LandingChart';
 import { LaserFlow } from '../../components/LaserFlow';
 import { fadeInUp, staggerContainer } from '../../lib/animations';
 
@@ -45,7 +45,7 @@ export const Hero: React.FC = () => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {/* LaserFlow Volumetric Beam — Centered Exactly in Middle (horizontalBeamOffset = 0.0) */}
+      {/* LaserFlow Volumetric Beam */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-90">
         <LaserFlow
           horizontalBeamOffset={0.15}
@@ -104,7 +104,7 @@ export const Hero: React.FC = () => {
             </span>
           </motion.div>
 
-          {/* Main Headline - High contrast with text-shadow against central laser beam */}
+          {/* Main Headline */}
           <motion.h1
             variants={fadeInUp}
             className="text-5xl sm:text-7xl lg:text-8xl font-extrabold text-white tracking-tight leading-[1.02] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]"
@@ -161,13 +161,14 @@ export const Hero: React.FC = () => {
               {/* Grid: Chart + AI Insight */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
-                  <BusinessChart
+                  <LandingChart
                     title="Revenue Trajectory (H1 FY26)"
                     subtitle="Actual vs AI Projections (Values in ₹ Crore)"
                     data={chartData}
                     type="area"
                     colorTheme="purple"
                     height={220}
+                    isDark={true}
                   />
                 </div>
 
@@ -202,5 +203,3 @@ export const Hero: React.FC = () => {
     </section>
   );
 };
-
-

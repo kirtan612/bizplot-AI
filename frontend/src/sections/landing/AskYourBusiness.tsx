@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Sparkles, MessageSquare, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { BusinessChart } from '../../components/BusinessChart';
+import { Sparkles, MessageSquare, ArrowRight } from 'lucide-react';
+import { LandingChart } from '../../components/LandingChart';
 import { fadeInUp } from '../../lib/animations';
 
 interface PromptPreset {
@@ -11,7 +11,7 @@ interface PromptPreset {
   answer: string;
   keyMetricLabel: string;
   keyMetricValue: string;
-  chartTheme?: 'cyan' | 'purple' | 'emerald' | 'amber' | 'rose' | 'forecast';
+  chartTheme?: 'cyan' | 'purple' | 'emerald' | 'amber' | 'rose';
   chartData?: { label: string; value: number }[];
   tableData?: { label: string; detail: string; value: string }[];
   recommendation: string;
@@ -122,7 +122,7 @@ const PRESETS: PromptPreset[] = [
     answer: 'Three high-priority items require executive sign-off: ABC Industries renewal, Hi-Tech supply PO, and cash buffer.',
     keyMetricLabel: 'PRIORITY COUNT',
     keyMetricValue: '3 Actions',
-    chartTheme: 'forecast',
+    chartTheme: 'purple',
     tableData: [
       { label: 'ABC Industries Retention', detail: 'Commercial contract review', value: 'Urgent' },
       { label: 'GI Pipe Reorder (120 MT)', detail: 'Prevent stock-out in Rajkot', value: 'High' },
@@ -228,7 +228,7 @@ export const AskYourBusiness: React.FC = () => {
 
                 {/* Optional Chart Preview */}
                 {activePreset.chartData && (
-                  <BusinessChart
+                  <LandingChart
                     title={`${activePreset.category} Visual Breakdown`}
                     data={activePreset.chartData}
                     type="bar"
@@ -236,6 +236,7 @@ export const AskYourBusiness: React.FC = () => {
                     height={150}
                     prefix=""
                     suffix=""
+                    isDark={true}
                   />
                 )}
 
@@ -276,4 +277,3 @@ export const AskYourBusiness: React.FC = () => {
     </section>
   );
 };
-

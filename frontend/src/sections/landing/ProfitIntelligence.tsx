@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingDown, Sparkles, ArrowRight, AlertOctagon } from 'lucide-react';
+import { TrendingDown, Sparkles, ArrowRight } from 'lucide-react';
 import { AnimatedNumber } from '../../components/AnimatedNumber';
-import { BusinessChart } from '../../components/BusinessChart';
+import { LandingChart } from '../../components/LandingChart';
 import { fadeInUp } from '../../lib/animations';
 
 interface VarianceItem {
@@ -106,7 +106,7 @@ export const ProfitIntelligence: React.FC = () => {
               </div>
 
               {/* Colourful Contribution Waterfall Bar Chart */}
-              <BusinessChart
+              <LandingChart
                 title="Profit Impact Breakdown (₹ Lakh)"
                 subtitle="Hover each bar to see exact contribution percentage & driver impact"
                 data={chartData}
@@ -115,6 +115,7 @@ export const ProfitIntelligence: React.FC = () => {
                 height={170}
                 prefix="₹"
                 suffix=" L"
+                isDark={true}
               />
 
               <div className="space-y-3">
@@ -168,4 +169,3 @@ export const ProfitIntelligence: React.FC = () => {
     </section>
   );
 };
-

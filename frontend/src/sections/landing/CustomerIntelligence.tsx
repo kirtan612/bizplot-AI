@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, AlertTriangle, ArrowRight, CheckCircle2, ShieldAlert, TrendingUp, TrendingDown, Clock, ShoppingBag } from 'lucide-react';
-import { BusinessChart } from '../../components/BusinessChart';
+import { Users, ArrowRight, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { LandingChart } from '../../components/LandingChart';
 import { fadeInUp } from '../../lib/animations';
 
 interface Customer {
@@ -228,7 +228,7 @@ export const CustomerIntelligence: React.FC = () => {
                 </div>
 
                 {/* Purchase Gap Trend Chart */}
-                <BusinessChart
+                <LandingChart
                   title="Order Gap Acceleration (Days Between Orders)"
                   subtitle="Increasing gap signals severe customer churn risk"
                   data={selectedCust.historyData}
@@ -237,6 +237,7 @@ export const CustomerIntelligence: React.FC = () => {
                   height={150}
                   suffix=" Days"
                   prefix=""
+                  isDark={true}
                 />
 
                 {/* Behavioral Metrics Grid */}
@@ -284,4 +285,3 @@ export const CustomerIntelligence: React.FC = () => {
     </section>
   );
 };
-
