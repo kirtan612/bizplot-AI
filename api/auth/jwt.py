@@ -8,6 +8,12 @@ from typing import Any, Dict, Optional
 import jwt
 from fastapi import HTTPException, status
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "bizpilot-super-secret-jwt-key-2026")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_SECONDS = 3600  # 1 hour

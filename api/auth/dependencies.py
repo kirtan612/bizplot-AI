@@ -14,8 +14,14 @@ from sqlalchemy.orm import sessionmaker, Session
 from src.db.models import User, CompanyMember, Role
 from api.auth.jwt import decode_access_token
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # Load DB URL from env
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:0613@localhost:5432/bizpilot")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:0613@127.0.0.1:5432/bizpilot")
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
