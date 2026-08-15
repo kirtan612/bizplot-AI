@@ -1,14 +1,8 @@
 {
-  "dataset_name": "financial_forecasting",
-  "version": "financial_forecasting_v1",
-  "generated_date": "2026-08-15T13:50:01.997649",
-  "source_database": "PostgreSQL (bizpilot)",
-  "organization_id": "6289d24b-b8c8-4dc2-9105-f6399d1302c1",
-  "record_count": 24,
-  "feature_count": 49,
-  "target_variable": "target_future_profit_next_month",
-  "columns": [
-    "month_start",
+  "model_name": "profit_forecasting",
+  "version": "1.0",
+  "algorithm": "Random Forest Regressor",
+  "features": [
     "revenue",
     "sales_taxable_value",
     "sales_weight_kg",
@@ -55,8 +49,24 @@
     "net_profit_roll_mean_3",
     "net_profit_roll_std_3",
     "net_profit_roll_mean_6",
-    "net_profit_roll_std_6",
-    "target_future_profit_next_month"
+    "net_profit_roll_std_6"
   ],
-  "extra_metadata": {}
+  "target": "target_future_profit_next_month",
+  "training_date": "2026-08-15T13:57:36.522918",
+  "dataset_version": "financial_forecasting_v1",
+  "validation_metrics": {
+    "mae": 258936.07,
+    "rmse": 287535.81,
+    "mape_pct": 23.86,
+    "r2": -0.5449,
+    "sample_count": 3
+  },
+  "final_test_metrics": {
+    "mae": 371357.79,
+    "rmse": 428627.65,
+    "mape_pct": 21.37,
+    "r2": -1.4701,
+    "sample_count": 4
+  },
+  "status": "candidate"
 }

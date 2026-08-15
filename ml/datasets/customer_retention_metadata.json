@@ -1,11 +1,11 @@
 {
   "dataset_name": "customer_retention",
   "version": "customer_retention_v1",
-  "generated_date": "2026-08-14T10:28:42.432739",
+  "generated_date": "2026-08-15T13:50:01.995921",
   "source_database": "PostgreSQL (bizpilot)",
   "organization_id": "6289d24b-b8c8-4dc2-9105-f6399d1302c1",
   "record_count": 50,
-  "feature_count": 32,
+  "feature_count": 33,
   "target_variable": "churned",
   "columns": [
     "customer_id",
@@ -34,6 +34,7 @@
     "days_since_last_purchase",
     "customer_lifetime_months",
     "purchase_frequency_per_month",
+    "churn_threshold_days",
     "churned",
     "payment_tier_code",
     "cust_type_Contractor",
@@ -45,7 +46,7 @@
     "p50_gap_days": 4.0,
     "p75_gap_days": 9.0,
     "p90_gap_days": 15.0,
-    "churn_threshold_days": 90.0,
+    "churn_threshold_strategy": "1.5x mean purchase gap (min 14 days)",
     "anchor_date": "2026-03-31 00:00:00"
   }
 }

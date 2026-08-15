@@ -1,14 +1,8 @@
 {
-  "dataset_name": "cashflow_forecasting",
-  "version": "cashflow_forecasting_v1",
-  "generated_date": "2026-08-15T13:50:02.000797",
-  "source_database": "PostgreSQL (bizpilot)",
-  "organization_id": "6289d24b-b8c8-4dc2-9105-f6399d1302c1",
-  "record_count": 24,
-  "feature_count": 39,
-  "target_variable": "target_future_closing_cash_next_month",
-  "columns": [
-    "month_start",
+  "model_name": "cashflow_forecasting",
+  "version": "1.0",
+  "algorithm": "Random Forest Regressor",
+  "features": [
     "cash_inflow",
     "cash_outflow",
     "opening_balance",
@@ -45,8 +39,34 @@
     "closing_balance_roll_mean_3",
     "closing_balance_roll_std_3",
     "closing_balance_roll_mean_6",
-    "closing_balance_roll_std_6",
-    "target_future_closing_cash_next_month"
+    "closing_balance_roll_std_6"
   ],
-  "extra_metadata": {}
+  "target": "target_future_closing_cash_next_month",
+  "training_date": "2026-08-15T13:59:04.350331",
+  "dataset_version": "cashflow_forecasting_v1",
+  "validation_metrics": {
+    "mae": 11894334.64,
+    "rmse": 16497980.91,
+    "mape_pct": 107.96,
+    "r2": -6.8642,
+    "sample_count": 3,
+    "risk_detection": {
+      "correct_detected": 3,
+      "missed": 0,
+      "false_alarm": 0
+    }
+  },
+  "final_test_metrics": {
+    "mae": 8233172.83,
+    "rmse": 10152290.31,
+    "mape_pct": 24.45,
+    "r2": -2.6109,
+    "sample_count": 4,
+    "risk_detection": {
+      "correct_detected": 4,
+      "missed": 0,
+      "false_alarm": 0
+    }
+  },
+  "status": "candidate"
 }

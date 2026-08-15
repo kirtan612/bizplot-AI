@@ -34,33 +34,27 @@ def build_financial_forecasting_dataset(
         purchases_order_count=('invoice_number', 'nunique')
     ).reset_index()
 
-    # 3. Monthly Operating Expenses from Cashbook Payment Vouchers
-    cashbook_payments = cashbook_df[cashbook_df['transaction_type'] == 'Payment']
-    cashbook_monthly = cashbook_payments.groupby('month_start').agg(
-        operating_expenses=('amount', 'sum'),
-        cash_outflow_count=('entry_id', 'count')
-    ).reset_index()
-
     # Merge monthly aggregations on month_start
     fin_df = pd.merge(sales_monthly, purchases_monthly, on='month_start', how='outer')
-    fin_df = pd.merge(fin_df, cashbook_monthly, on='month_start', how='outer')
     fin_df = fin_df.sort_values(by='month_start').fillna(0.0)
 
     # Calculate COGS & Profit metrics
-    # COGS = Estimated cost of sales based on purchase cost per kg or weighted cost
     fin_df['avg_purchase_unit_cost'] = np.where(
         fin_df['purchases_weight_kg'] > 0,
         fin_df['purchases_taxable_value'] / fin_df['purchases_weight_kg'],
-        60.0 # Default benchmark
+        60.0 # Default benchmark rate per kg
     )
     
     fin_df['cogs'] = (fin_df['sales_weight_kg'] * fin_df['avg_purchase_unit_cost']).round(2)
-    fin_df['gross_profit'] = (fin_df['revenue'] - fin_df['cogs']).round(2)
+    fin_df['gross_profit'] = (fin_df['sales_taxable_value'] - fin_df['cogs']).round(2)
     fin_df['gross_margin_pct'] = np.where(
         fin_df['revenue'] > 0,
         ((fin_df['gross_profit'] / fin_df['revenue']) * 100).round(2),
         0.0
     )
+
+    # Operating expenses (distributor logistics, rent, staff salaries: ~6% of revenue)
+    fin_df['operating_expenses'] = (fin_df['revenue'] * 0.06).round(2)
     fin_df['operating_profit'] = (fin_df['gross_profit'] - fin_df['operating_expenses']).round(2)
     fin_df['net_profit'] = fin_df['operating_profit'] # Base operating net profit
 

@@ -11,7 +11,7 @@ def build_customer_retention_dataset(
     customers_df: pd.DataFrame, 
     sales_df: pd.DataFrame,
     anchor_date: pd.Timestamp = None
-) -> pd.DataFrame:
+) -> tuple[pd.DataFrame, dict]:
     """
     Builds customer-level feature dataset and defines data-driven churn target.
     """
@@ -31,18 +31,11 @@ def build_customer_retention_dataset(
     p75_gap = float(valid_gaps.quantile(0.75)) if len(valid_gaps) > 0 else 45.0
     p90_gap = float(valid_gaps.quantile(0.90)) if len(valid_gaps) > 0 else 60.0
 
-    # Churn threshold: 1.5 * P90 gap or 90 days minimum
-    churn_threshold_days = max(90.0, float(np.round(1.5 * p90_gap)))
-
-    print(f"--- CUSTOMER PURCHASE INTERVAL ANALYSIS ---")
-    print(f"  P50 Gap: {p50_gap:.1f} days | P75 Gap: {p75_gap:.1f} days | P90 Gap: {p90_gap:.1f} days")
-    print(f"  Recommended Churn Inactivity Threshold: {churn_threshold_days:.1f} days\n")
-
     # Aggregate sales metrics per customer
     customer_agg = sales_sorted.groupby('customer_id').agg(
         first_purchase_date=('sales_date', 'min'),
         last_purchase_date=('sales_date', 'max'),
-        total_orders=('invoice_number', 'nunique'),
+        total_orders=('sales_id', 'nunique'),
         total_spend=('invoice_amount', 'sum'),
         total_weight_kg=('total_weight_kg', 'sum'),
         unique_products=('product_id', 'nunique'),
@@ -50,7 +43,7 @@ def build_customer_retention_dataset(
     ).reset_index()
 
     customer_agg['average_order_value'] = (customer_agg['total_spend'] / customer_agg['total_orders']).round(2)
-    customer_agg['mean_days_between_orders'] = customer_agg['mean_days_between_orders'].fillna(0.0).round(1)
+    customer_agg['mean_days_between_orders'] = customer_agg['mean_days_between_orders'].fillna(5.0).round(1)
 
     # Days since last purchase (Recency)
     customer_agg['days_since_last_purchase'] = (anchor_date - customer_agg['last_purchase_date']).dt.days
@@ -67,6 +60,13 @@ def build_customer_retention_dataset(
         customer_agg['total_orders']
     )
 
+    # Churn threshold: Account recency > 1.5 * customer's mean_days_between_orders (min 14 days)
+    customer_agg['churn_threshold_days'] = customer_agg['mean_days_between_orders'].apply(lambda g: max(14.0, float(np.round(1.5 * g))))
+    
+    print(f"--- CUSTOMER PURCHASE INTERVAL ANALYSIS ---")
+    print(f"  P50 Gap: {p50_gap:.1f} days | P75 Gap: {p75_gap:.1f} days | P90 Gap: {p90_gap:.1f} days")
+    print(f"  Dynamic Churn Threshold (1.5x customer mean gap, min 14 days)")
+
     # Merge customer master data
     merged = pd.merge(customers_df, customer_agg, on='customer_id', how='left')
 
@@ -79,14 +79,15 @@ def build_customer_retention_dataset(
     merged['days_since_last_purchase'] = merged['days_since_last_purchase'].fillna(999).astype(int)
     merged['mean_days_between_orders'] = merged['mean_days_between_orders'].fillna(0.0)
     merged['purchase_frequency_per_month'] = merged['purchase_frequency_per_month'].fillna(0.0)
+    merged['churn_threshold_days'] = merged['churn_threshold_days'].fillna(14.0)
 
     # Define binary churn target
-    merged['churned'] = (merged['days_since_last_purchase'] > churn_threshold_days).astype(int)
+    merged['churned'] = (merged['days_since_last_purchase'] > merged['churn_threshold_days']).astype(int)
 
     return merged, {
         "p50_gap_days": p50_gap,
         "p75_gap_days": p75_gap,
         "p90_gap_days": p90_gap,
-        "churn_threshold_days": churn_threshold_days,
+        "churn_threshold_strategy": "1.5x mean purchase gap (min 14 days)",
         "anchor_date": str(anchor_date)
     }
