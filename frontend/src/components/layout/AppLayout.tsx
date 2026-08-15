@@ -112,7 +112,7 @@ const RoleSwitcherDropdown: React.FC = () => {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justify: 'space-between',
+                  justifyContent: 'space-between',
                   width: '100%',
                   padding: '8px 12px',
                   borderRadius: 10,
@@ -183,7 +183,7 @@ const UserMenuDropdown: React.FC = () => {
           background: t.accent,
           display: 'flex',
           alignItems: 'center',
-          justify: 'center',
+          justifyContent: 'center',
           textAlign: 'center',
           color: '#ffffff',
           fontWeight: 800,
@@ -495,7 +495,7 @@ export const AppLayout: React.FC = () => {
               color: t.textSub,
               display: 'flex',
               alignItems: 'center',
-              justify: 'center',
+              justifyContent: 'center',
               cursor: 'pointer',
               padding: 0,
               margin: 0,
@@ -521,7 +521,7 @@ export const AppLayout: React.FC = () => {
               color: t.textSub,
               display: 'flex',
               alignItems: 'center',
-              justify: 'center',
+              justifyContent: 'center',
               cursor: 'pointer',
               padding: 0,
               margin: 0,
@@ -548,7 +548,7 @@ export const AppLayout: React.FC = () => {
                 color: t.textSub,
                 display: 'flex',
                 alignItems: 'center',
-                justify: 'center',
+                justifyContent: 'center',
                 cursor: 'pointer',
                 padding: 0,
                 margin: 0,
@@ -579,7 +579,7 @@ export const AppLayout: React.FC = () => {
                   zIndex: 50,
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, pb: 6, borderBottom: `1px solid ${t.border}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, paddingBottom: 6, borderBottom: `1px solid ${t.border}` }}>
                   <span style={{ fontSize: 13, fontWeight: 700, color: t.text, fontFamily: "'Manrope', sans-serif" }}>AI Alerts</span>
                   <span style={{ fontSize: 11, color: t.accent, fontWeight: 600 }}>{MOCK_AI_ALERTS.length} new</span>
                 </div>

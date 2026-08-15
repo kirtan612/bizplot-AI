@@ -70,7 +70,7 @@ export const ExecutiveWorkspacePage: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%', fontFamily: "'Inter', sans-serif" }}>
       {/* Top Back Navigation Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <button
           onClick={() => navigate('/app/executives')}
           style={{
@@ -102,7 +102,7 @@ export const ExecutiveWorkspacePage: React.FC = () => {
           borderRadius: 28,
           padding: 24,
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           gap: 20,
         }}
@@ -116,7 +116,7 @@ export const ExecutiveWorkspacePage: React.FC = () => {
               borderRadius: 20,
               display: 'flex',
               alignItems: 'center',
-              justify: 'center',
+              justifyContent: 'center',
               background: t.accent,
               color: '#ffffff',
               flexShrink: 0,
@@ -206,7 +206,7 @@ export const ExecutiveWorkspacePage: React.FC = () => {
             gap: 14,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 30, height: 30, borderRadius: '50%', background: t.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Activity size={15} color={t.accent} />
@@ -252,7 +252,7 @@ export const ExecutiveWorkspacePage: React.FC = () => {
             gap: 14,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 30, height: 30, borderRadius: '50%', background: t.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Lightbulb size={15} color={t.warn} />

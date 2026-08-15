@@ -5,7 +5,7 @@ import { useTheme } from '../../context/ThemeContext';
 import type { Permission, Role } from '../../types/auth';
 
 export const RoleManagementPage: React.FC = () => {
-  const { roles, updateRolePermissions } = useAuth();
+  const { roles, updateRole } = useAuth();
   const { tokens: t } = useTheme();
 
   const [selectedRoleId, setSelectedRoleId] = useState<string>(roles[0]?.id || 'role-owner');
@@ -61,7 +61,11 @@ export const RoleManagementPage: React.FC = () => {
       updated = [...selectedRole.permissions, permKey];
     }
 
-    updateRolePermissions(selectedRole.id, updated);
+    updateRole(selectedRole.id, {
+      name: selectedRole.name,
+      description: selectedRole.description,
+      permissions: updated,
+    });
   };
 
   return (
@@ -74,7 +78,7 @@ export const RoleManagementPage: React.FC = () => {
           borderRadius: 28,
           padding: 24,
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           gap: 20,
         }}
@@ -158,7 +162,7 @@ export const RoleManagementPage: React.FC = () => {
           }}
           className="lg:col-span-3"
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 12, borderBottom: `1px solid ${t.border}` }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 12, borderBottom: `1px solid ${t.border}` }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: t.text, fontFamily: "'Manrope', sans-serif" }}>
                 {selectedRole.name} Role Matrix

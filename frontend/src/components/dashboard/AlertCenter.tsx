@@ -33,7 +33,7 @@ export const AlertCenter: React.FC = () => {
       }}
       className="hover:-translate-y-1 hover:shadow-lg"
     >
-      <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between', marginBottom: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div>
           <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: t.text, fontFamily: "'Manrope', sans-serif" }}>
             AI Alerts
@@ -62,7 +62,7 @@ export const AlertCenter: React.FC = () => {
               }}
               className="hover:translate-x-1"
             >
-              <div style={{ display: 'flex', justify: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span
                   style={{
                     fontSize: 10.5,
@@ -86,7 +86,7 @@ export const AlertCenter: React.FC = () => {
                 {alt.explanation}
               </p>
 
-              <div style={{ display: 'flex', justify: 'space-between', alignItems: 'center', marginTop: 4 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
                 <span style={{ fontSize: 10.5, color: t.textFaint }}>{alt.sourceExecutive}</span>
                 <button
                   onClick={() => navigate(alt.actionRoute)}

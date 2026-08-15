@@ -16,7 +16,7 @@ export const PurchasesPage: React.FC = () => {
           borderRadius: 28,
           padding: 24,
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           gap: 20,
         }}

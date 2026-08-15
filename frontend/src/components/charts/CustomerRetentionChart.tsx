@@ -58,7 +58,7 @@ export const CustomerRetentionChart: React.FC = () => {
         padding: 22,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', justify: 'space-between', marginBottom: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
         <div>
           <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: t.text, fontFamily: "'Manrope', sans-serif" }}>
             Customer retention

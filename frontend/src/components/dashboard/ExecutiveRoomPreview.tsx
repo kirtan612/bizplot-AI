@@ -20,7 +20,7 @@ export const ExecutiveRoomPreview: React.FC = () => {
       }}
       className="hover:-translate-y-1 hover:shadow-lg"
     >
-      <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between', marginBottom: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ width: 32, height: 32, borderRadius: '50%', background: t.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <UsersRound size={16} color={t.accent} />

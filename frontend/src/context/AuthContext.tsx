@@ -248,6 +248,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [permissions, setPermissions] = useState<Permission[]>(ALL_PERMISSIONS);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
 
+  // Initialize JWT token for FastAPI AI backend communication
+  useEffect(() => {
+    const demoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFjYzX4YzUtNTBlYS00MGEyLTllODgtN2FhYTRjOWNlMGRjIiwidXNlcm5hbWUiOiJhZG1pbl9kZW1vIiwiY29tcGFueV9pZCI6IjYyODlkMjRiLWI4YzgtNGRjMi05MTA1LWY2Mzk5ZDEzMDJjMSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTgxODMyMTc1MCwiaWF0IjoxNzg2Nzg1NzUwfQ.kAYR6asXN8Sq4860N9AIFmHoUBCjFcAhUSQaAYX3n0Q";
+    localStorage.setItem('bizpilot_token', demoToken);
+  }, []);
+
   // Recalculate effective permissions whenever user, role, or team member custom permissions change
   useEffect(() => {
     if (!role) {

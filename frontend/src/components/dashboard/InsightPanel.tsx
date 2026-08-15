@@ -33,7 +33,7 @@ export const InsightPanel: React.FC = () => {
       }}
       className="hover:-translate-y-1 hover:shadow-lg"
     >
-      <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between', marginBottom: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div>
           <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: t.text, fontFamily: "'Manrope', sans-serif" }}>
             AI Business Insights
@@ -62,7 +62,7 @@ export const InsightPanel: React.FC = () => {
               }}
               className="hover:translate-x-1 hover:border-purple-300 dark:hover:border-purple-800"
             >
-              <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span
                   style={{
                     fontSize: 10.5,
@@ -89,7 +89,7 @@ export const InsightPanel: React.FC = () => {
                 <strong>Why it matters:</strong> {item.whyItMatters}
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between', pt: 4, borderTop: `1px solid ${t.border}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 4, borderTop: `1px solid ${t.border}` }}>
                 <span style={{ fontSize: 11, color: t.textFaint }}>
                   {item.recommendedAction}
                 </span>

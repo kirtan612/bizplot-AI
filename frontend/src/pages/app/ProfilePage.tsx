@@ -87,7 +87,7 @@ export const ProfilePage: React.FC = () => {
           borderRadius: 28,
           padding: 28,
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 20,
@@ -198,7 +198,7 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {/* Tabs Row */}
-      <div style={{ display: 'flex', gap: 8, borderBottom: `1px solid ${t.border}`, pb: 2 }}>
+      <div style={{ display: 'flex', gap: 8, borderBottom: `1px solid ${t.border}`, paddingBottom: 2 }}>
         {[
           { id: 'profile', label: 'Personal Information', icon: User },
           { id: 'security', label: 'Security & Auth', icon: KeyRound },

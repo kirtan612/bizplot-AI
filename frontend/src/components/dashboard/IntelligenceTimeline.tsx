@@ -17,7 +17,7 @@ export const IntelligenceTimeline: React.FC = () => {
       }}
       className="hover:-translate-y-1 hover:shadow-lg"
     >
-      <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between', marginBottom: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div>
           <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: t.text, fontFamily: "'Manrope', sans-serif" }}>
             Company Intelligence

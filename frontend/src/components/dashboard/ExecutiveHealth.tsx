@@ -23,7 +23,7 @@ export const ExecutiveHealth: React.FC = () => {
       }}
       className="hover:-translate-y-1 hover:shadow-lg"
     >
-      <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: t.text, fontFamily: "'Manrope', sans-serif" }}>Executive Health</h3>
           <p style={{ margin: '2px 0 0', fontSize: 12, color: t.textSub, fontFamily: "'Inter', sans-serif" }}>AI leadership team telemetry status</p>
@@ -46,7 +46,7 @@ export const ExecutiveHealth: React.FC = () => {
               cursor: 'pointer',
               display: 'flex',
               flexDirection: 'column',
-              justify: 'space-between',
+              justifyContent: 'space-between',
               gap: 8,
               transition: 'transform 0.15s ease, border-color 0.15s ease',
             }}
