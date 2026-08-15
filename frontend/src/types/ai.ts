@@ -151,3 +151,83 @@ export interface InsufficientDataResponse {
   status: 'INSUFFICIENT_DATA';
   message: string;
 }
+
+// ==============================================================================
+// PHASE 6 AI EXECUTIVE LAYER TYPES
+// ==============================================================================
+
+export interface ExecutivePriorityItem {
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  title: string;
+  reason: string;
+}
+
+export interface ExecutiveRecommendationItem {
+  title: string;
+  reason: string;
+  source: string;
+  area?: string;
+}
+
+export interface ExecutiveQuestionItem {
+  to_executive: string;
+  question: string;
+}
+
+export interface ExecutiveAnalysisResponse {
+  executive: 'CFO' | 'COO' | 'CMO' | 'CEO' | string;
+  name: string;
+  status: 'OPTIMAL' | 'ATTENTION_REQUIRED' | 'CRITICAL_RISK' | 'INSUFFICIENT_DATA';
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  summary: string;
+  key_findings: string[];
+  priorities: ExecutivePriorityItem[];
+  recommendations: ExecutiveRecommendationItem[];
+  questions_for_executives: ExecutiveQuestionItem[];
+  model_info: {
+    name: string;
+    version: string;
+    status: string;
+  };
+}
+
+export interface ExecutiveQuestionResponse {
+  from_role: string;
+  to_role: string;
+  question: string;
+  answer: string;
+  supporting_findings: string[];
+}
+
+export interface StrategicDecisionItem {
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  decision: string;
+  reason: string;
+}
+
+export interface ActionItem {
+  owner: string;
+  action: string;
+  target_timeline: string;
+}
+
+export interface BoardroomMessage {
+  from_executive: string;
+  to_executive: string;
+  message: string;
+  timestamp: string;
+}
+
+export interface ExecutiveMeetingResponse {
+  meeting_id: string;
+  organization_id: string;
+  started_at: string;
+  company_status: 'OPTIMAL' | 'ATTENTION_REQUIRED' | 'CRITICAL_RISK' | 'INSUFFICIENT_DATA';
+  summary: string;
+  top_risks: string[];
+  executive_summaries: Record<string, string>;
+  strategic_priorities: string[];
+  decisions: StrategicDecisionItem[];
+  actions: ActionItem[];
+  messages: BoardroomMessage[];
+}

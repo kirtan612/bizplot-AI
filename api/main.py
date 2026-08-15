@@ -28,6 +28,7 @@ from api.routers.inventory import router as inventory_router
 from api.routers.dashboard import router as dashboard_router
 from api.routers.predictions import router as predictions_router
 from api.routers.ai import router as ai_router
+from api.routers.executives import router as executives_router
 
 app = FastAPI(
     title="BizPilot AI API",
@@ -56,6 +57,8 @@ app.include_router(dashboard_router, prefix="/api", tags=["Dashboard"])
 app.include_router(predictions_router, prefix="/api", tags=["AI Predictions (Legacy)"])
 app.include_router(ai_router, prefix="/api/v1/ai", tags=["AI Engine"])
 app.include_router(ai_router, prefix="/api/ai", tags=["AI Engine"])
+app.include_router(executives_router, prefix="/api/v1", tags=["AI Executives"])
+app.include_router(executives_router, prefix="/api", tags=["AI Executives"])
 
 
 @app.get("/api/health", tags=["Health"])

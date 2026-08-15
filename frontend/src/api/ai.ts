@@ -14,6 +14,9 @@ import type {
   CashflowRiskResponse,
   AIInsightResponse,
   AIRecommendationResponse,
+  ExecutiveAnalysisResponse,
+  ExecutiveQuestionResponse,
+  ExecutiveMeetingResponse,
 } from '../types/ai';
 
 export interface DashboardKPIs {
@@ -115,4 +118,41 @@ export async function getDashboardKPIs(): Promise<DashboardKPIs> {
 
 export async function getRecentActivity(): Promise<RecentActivity[]> {
   return apiFetch<RecentActivity[]>('/dashboard/recent-activity');
+}
+
+// ==============================================================================
+// PHASE 6 AI EXECUTIVE LAYER CALLS
+// ==============================================================================
+
+export async function getCFOAnalysis(): Promise<ExecutiveAnalysisResponse> {
+  return apiFetch<ExecutiveAnalysisResponse>('/v1/executives/cfo');
+}
+
+export async function getCOOAnalysis(): Promise<ExecutiveAnalysisResponse> {
+  return apiFetch<ExecutiveAnalysisResponse>('/v1/executives/coo');
+}
+
+export async function getCMOAnalysis(): Promise<ExecutiveAnalysisResponse> {
+  return apiFetch<ExecutiveAnalysisResponse>('/v1/executives/cmo');
+}
+
+export async function getCEOAnalysis(): Promise<ExecutiveAnalysisResponse> {
+  return apiFetch<ExecutiveAnalysisResponse>('/v1/executives/ceo');
+}
+
+export async function askExecutiveQuestion(fromRole: string, toRole: string, question: string): Promise<ExecutiveQuestionResponse> {
+  return apiFetch<ExecutiveQuestionResponse>('/v1/executives/collaboration/ask', {
+    method: 'POST',
+    body: JSON.stringify({ from_role: fromRole, to_role: toRole, question }),
+  });
+}
+
+export async function runExecutiveMeeting(): Promise<ExecutiveMeetingResponse> {
+  return apiFetch<ExecutiveMeetingResponse>('/v1/executives/meeting/start', {
+    method: 'POST',
+  });
+}
+
+export async function getLatestExecutiveMeeting(): Promise<ExecutiveMeetingResponse> {
+  return apiFetch<ExecutiveMeetingResponse>('/v1/executives/meeting/latest');
 }
