@@ -70,6 +70,21 @@ class RawStorage:
         logger.info(f"Raw storage saved: {rel_path} ({len(content)} bytes)")
         return rel_path, safe_name
 
+    def get_file(self, company_id: UUID, ingestion_id: str) -> Optional[bytes]:
+        """Retrieves raw content bytes for the first file in an ingestion directory."""
+        try:
+            ing_dir = self.get_ingestion_dir(company_id, ingestion_id)
+            if not ing_dir.exists():
+                return None
+            files = [f for f in ing_dir.iterdir() if f.is_file()]
+            if not files:
+                return None
+            with open(files[0], "rb") as f:
+                return f.read()
+        except Exception as e:
+            logger.error(f"Error getting file for job {ingestion_id}: {e}")
+            return None
+
     def retrieve(self, company_id: UUID, ingestion_id: str, safe_filename: str) -> bytes:
         """Retrieves raw content bytes for an organization file."""
         safe_name = sanitize_filename(safe_filename)

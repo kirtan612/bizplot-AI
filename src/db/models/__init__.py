@@ -16,6 +16,21 @@ from src.db.models.master_data import (
 )
 from src.db.models.transactions import Purchase, Sale, Cashbook
 from src.db.models.inventory import InventorySnapshot
+from src.db.models.canonical import (
+    CanonicalOrder,
+    CanonicalOrderItem,
+    CanonicalInvoice,
+    CanonicalInvoiceItem,
+    CanonicalPayment,
+    CanonicalExpense,
+    CanonicalBankTransaction,
+    CanonicalEmployee,
+    CanonicalTaxRecord,
+    CanonicalDocument,
+    SourceLineage,
+    NormalizationJob,
+    ReviewQueueItem
+)
 
 __all__ = [
     "Base",
@@ -37,4 +52,17 @@ __all__ = [
     "Sale",
     "Cashbook",
     "InventorySnapshot",
+    "CanonicalOrder",
+    "CanonicalOrderItem",
+    "CanonicalInvoice",
+    "CanonicalInvoiceItem",
+    "CanonicalPayment",
+    "CanonicalExpense",
+    "CanonicalBankTransaction",
+    "CanonicalEmployee",
+    "CanonicalTaxRecord",
+    "CanonicalDocument",
+    "SourceLineage",
+    "NormalizationJob",
+    "ReviewQueueItem"
 ]

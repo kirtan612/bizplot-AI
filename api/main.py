@@ -30,6 +30,8 @@ from api.routers.predictions import router as predictions_router
 from api.routers.ai import router as ai_router
 from api.routers.executives import router as executives_router
 from api.routers.ingestion import router as ingestion_router
+from api.routers.normalization import router as normalization_router
+from api.routers.canonical import router as canonical_router
 
 app = FastAPI(
     title="BizPilot AI API",
@@ -62,6 +64,10 @@ app.include_router(executives_router, prefix="/api/v1", tags=["AI Executives"])
 app.include_router(executives_router, prefix="/api", tags=["AI Executives"])
 app.include_router(ingestion_router, prefix="/api/v1", tags=["Enterprise Data Ingestion"])
 app.include_router(ingestion_router, prefix="/api", tags=["Enterprise Data Ingestion"])
+app.include_router(normalization_router, prefix="/api/v1", tags=["Data Normalization"])
+app.include_router(normalization_router, prefix="/api", tags=["Data Normalization"])
+app.include_router(canonical_router, prefix="/api/v1", tags=["Canonical Business Data"])
+app.include_router(canonical_router, prefix="/api", tags=["Canonical Business Data"])
 
 
 @app.get("/api/health", tags=["Health"])

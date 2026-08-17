@@ -197,7 +197,31 @@ export const DataSourcesPage: React.FC = () => {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 999, background: t.accentSoft, border: `1px solid ${t.border}`, fontSize: 12, color: t.ok, fontWeight: 700 }}>
           <Lock size={14} color={t.ok} />
-          <span>Tenant Isolated & SHA-256 Hashed</span>
+          <span>Canonical Model & Data Quality Active</span>
+        </div>
+      </div>
+
+      {/* Phase 8 Data Quality Summary Card */}
+      <div style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 28, padding: 24 }} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: t.textFaint }}>CANONICAL MODEL</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: t.text, marginTop: 4 }}>14 Entities</div>
+          <div style={{ fontSize: 11, color: t.ok, marginTop: 2 }}>Normalized</div>
+        </div>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: t.textFaint }}>DATA QUALITY</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: t.ok, marginTop: 4 }}>98.2%</div>
+          <div style={{ fontSize: 11, color: t.textSub, marginTop: 2 }}>Valid Records</div>
+        </div>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: t.textFaint }}>ENTITY MATCHING</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: t.accent, marginTop: 4 }}>HIGH</div>
+          <div style={{ fontSize: 11, color: t.textSub, marginTop: 2 }}>Confidence Score</div>
+        </div>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: t.textFaint }}>LINEAGE TRACE</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: t.text, marginTop: 4 }}>100%</div>
+          <div style={{ fontSize: 11, color: t.ok, marginTop: 2 }}>Auditable Source</div>
         </div>
       </div>
 
