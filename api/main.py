@@ -33,6 +33,8 @@ from api.routers.ingestion import router as ingestion_router
 from api.routers.normalization import router as normalization_router
 from api.routers.canonical import router as canonical_router
 
+from api.security.headers import SecurityHeadersMiddleware
+
 app = FastAPI(
     title="BizPilot AI API",
     description="FastAPI Backend for GI/MS Steel Pipe Distribution & Analytics System",
@@ -41,6 +43,9 @@ app = FastAPI(
     redoc_url="/redoc",
     openapi_url="/openapi.json"
 )
+
+# Add Security Headers Middleware
+app.add_middleware(SecurityHeadersMiddleware)
 
 # Configure CORS
 app.add_middleware(

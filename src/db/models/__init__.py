@@ -31,6 +31,7 @@ from src.db.models.canonical import (
     NormalizationJob,
     ReviewQueueItem
 )
+from src.db.models.audit import AuditLog
 
 __all__ = [
     "Base",
@@ -64,5 +65,6 @@ __all__ = [
     "CanonicalDocument",
     "SourceLineage",
     "NormalizationJob",
-    "ReviewQueueItem"
+    "ReviewQueueItem",
+    "AuditLog"
 ]
