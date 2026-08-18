@@ -41,6 +41,15 @@ from src.db.models.knowledge import (
     KnowledgeBuildJob,
 )
 from src.db.models.rag import DocumentChunk
+from src.db.models.executives import (
+    ExecutiveAgent,
+    ExecutiveMeeting,
+    ExecutiveParticipant,
+    ExecutiveMessage,
+    ExecutiveFinding,
+    ExecutiveRecommendation,
+    ExecutiveConflict,
+)
 
 __all__ = [
     "Base",
@@ -83,4 +92,11 @@ __all__ = [
     "KnowledgeConflict",
     "KnowledgeBuildJob",
     "DocumentChunk",
+    "ExecutiveAgent",
+    "ExecutiveMeeting",
+    "ExecutiveParticipant",
+    "ExecutiveMessage",
+    "ExecutiveFinding",
+    "ExecutiveRecommendation",
+    "ExecutiveConflict",
 ]

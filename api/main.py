@@ -29,6 +29,7 @@ from api.routers.dashboard import router as dashboard_router
 from api.routers.predictions import router as predictions_router
 from api.routers.ai import router as ai_router
 from api.routers.executives import router as executives_router
+from api.routers.executive_agents import router as executive_agents_router
 from api.routers.ingestion import router as ingestion_router
 from api.routers.normalization import router as normalization_router
 from api.routers.canonical import router as canonical_router
@@ -69,6 +70,8 @@ app.include_router(ai_router, prefix="/api/v1/ai", tags=["AI Engine"])
 app.include_router(ai_router, prefix="/api/ai", tags=["AI Engine"])
 app.include_router(executives_router, prefix="/api/v1", tags=["AI Executives"])
 app.include_router(executives_router, prefix="/api", tags=["AI Executives"])
+app.include_router(executive_agents_router, prefix="/api/v1", tags=["Advanced Multi-Agent Intelligence"])
+app.include_router(executive_agents_router, prefix="/api", tags=["Advanced Multi-Agent Intelligence"])
 app.include_router(ingestion_router, prefix="/api/v1", tags=["Enterprise Data Ingestion"])
 app.include_router(ingestion_router, prefix="/api", tags=["Enterprise Data Ingestion"])
 app.include_router(normalization_router, prefix="/api/v1", tags=["Data Normalization"])
