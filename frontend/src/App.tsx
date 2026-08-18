@@ -42,6 +42,7 @@ const CashflowPage = lazy(() => import('./pages/app/CashflowPage').then(m => ({ 
 const ReportsPage = lazy(() => import('./pages/app/ReportsPage').then(m => ({ default: m.ReportsPage })));
 const AIInsightsPage = lazy(() => import('./pages/app/AIInsightsPage').then(m => ({ default: m.AIInsightsPage })));
 const DataSourcesPage = lazy(() => import('./pages/app/DataSourcesPage').then(m => ({ default: m.DataSourcesPage })));
+const CompanyKnowledgePage = lazy(() => import('./pages/app/CompanyKnowledgePage').then(m => ({ default: m.CompanyKnowledgePage })));
 const ProfilePage = lazy(() => import('./pages/app/ProfilePage').then(m => ({ default: m.ProfilePage })));
 
 // Governance & Settings Pages (Code Split)
@@ -114,6 +115,14 @@ export function App() {
                 element={
                   <ProtectedRoute requiredPermission="dashboard.view">
                     <DataSourcesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="company-knowledge"
+                element={
+                  <ProtectedRoute requiredPermission="dashboard.view">
+                    <CompanyKnowledgePage />
                   </ProtectedRoute>
                 }
               />

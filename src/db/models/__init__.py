@@ -32,6 +32,15 @@ from src.db.models.canonical import (
     ReviewQueueItem
 )
 from src.db.models.audit import AuditLog
+from src.db.models.knowledge import (
+    CompanyProfile,
+    CompanyKnowledgeItem,
+    KnowledgeRelationship,
+    KnowledgeSource,
+    KnowledgeConflict,
+    KnowledgeBuildJob,
+)
+from src.db.models.rag import DocumentChunk
 
 __all__ = [
     "Base",
@@ -66,5 +75,12 @@ __all__ = [
     "SourceLineage",
     "NormalizationJob",
     "ReviewQueueItem",
-    "AuditLog"
+    "AuditLog",
+    "CompanyProfile",
+    "CompanyKnowledgeItem",
+    "KnowledgeRelationship",
+    "KnowledgeSource",
+    "KnowledgeConflict",
+    "KnowledgeBuildJob",
+    "DocumentChunk",
 ]

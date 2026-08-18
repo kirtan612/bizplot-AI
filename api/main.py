@@ -32,6 +32,8 @@ from api.routers.executives import router as executives_router
 from api.routers.ingestion import router as ingestion_router
 from api.routers.normalization import router as normalization_router
 from api.routers.canonical import router as canonical_router
+from api.routers.knowledge import router as knowledge_router
+from api.routers.rag import router as rag_router
 
 from api.security.headers import SecurityHeadersMiddleware
 
@@ -73,6 +75,12 @@ app.include_router(normalization_router, prefix="/api/v1", tags=["Data Normaliza
 app.include_router(normalization_router, prefix="/api", tags=["Data Normalization"])
 app.include_router(canonical_router, prefix="/api/v1", tags=["Canonical Business Data"])
 app.include_router(canonical_router, prefix="/api", tags=["Canonical Business Data"])
+app.include_router(knowledge_router, prefix="/api/v1/knowledge", tags=["Company Knowledge"])
+app.include_router(knowledge_router, prefix="/api/knowledge", tags=["Company Knowledge"])
+app.include_router(rag_router, prefix="/api/v1/knowledge", tags=["RAG & Knowledge Retrieval"])
+app.include_router(rag_router, prefix="/api/knowledge", tags=["RAG & Knowledge Retrieval"])
+app.include_router(rag_router, prefix="/api/v1/rag", tags=["RAG & Knowledge Retrieval"])
+app.include_router(rag_router, prefix="/api/rag", tags=["RAG & Knowledge Retrieval"])
 
 
 @app.get("/api/health", tags=["Health"])

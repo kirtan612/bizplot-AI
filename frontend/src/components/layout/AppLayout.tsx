@@ -341,6 +341,7 @@ export const AppLayout: React.FC = () => {
   const navItems: NavItem[] = [
     { label: 'AI Executives', path: '/app/executives', permission: 'ai.executive_center.view' },
     { label: 'Boardroom', path: '/app/executive-room', permission: 'ai.executive_room.view' },
+    { label: 'Company Knowledge', path: '/app/company-knowledge', permission: 'dashboard.view' },
     { label: 'Data Sources', path: '/app/data-sources', permission: 'dashboard.view' },
     { label: 'Sales', path: '/app/sales', permission: 'sales.view' },
     { label: 'Customers', path: '/app/customers', permission: 'customers.view' },
